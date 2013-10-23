@@ -4,8 +4,6 @@ version := "0.0.0"
 
 scalaVersion := "2.10.2"
 
-addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "2.4.0")
-
 resolvers ++= Seq(
   "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/",
   "Typesafe Snapshots" at "http://repo.typesafe.com/typesafe/snapshots/",
