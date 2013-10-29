@@ -9,6 +9,6 @@ class Model(val gameSize: Int) {
   def removeListener(ln: Listener) = listeners = listeners.filterNot(_ == ln)
   def notifyListeners = listeners.foreach(_.update)
 
-  val playerA = new Player(gameSize)
-  val playerB = new Player(gameSize)
+  var playerA: Player = null
+  var playerB: Player = null
 }

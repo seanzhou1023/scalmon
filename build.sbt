@@ -13,7 +13,7 @@ resolvers ++= Seq(
 )
 
 libraryDependencies ++= Seq(
-  "com.github.scopt" %% "scopt" % "3.1.0"
-  //"org.scalatest" % "scalatest_2.10" % "1.9.1",
+  "com.github.scopt" %% "scopt" % "3.1.0",
+  "org.scalatest" % "scalatest_2.10" % "2.0.RC3" % "test"
   //"play" % "play_2.10" % "2.1-SNAPSHOT"
 )
