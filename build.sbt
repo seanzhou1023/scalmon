@@ -17,3 +17,20 @@ libraryDependencies ++= Seq(
   "org.scalatest" % "scalatest_2.10" % "2.0.RC3" % "test"
   //"play" % "play_2.10" % "2.1-SNAPSHOT"
 )
+
+scalacOptions ++= Seq(
+  "-deprecation",
+  "-feature"
+)
+
+// BuildInfo
+buildInfoSettings
+
+sourceGenerators in Compile <+= buildInfo
+
+buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion)
+
+buildInfoPackage := "htwg.scalmon"
+
+// BuildInfo auch in Eclipse als Source verwenden
+EclipseKeys.createSrc := EclipseCreateSrc.Default + EclipseCreateSrc.Managed

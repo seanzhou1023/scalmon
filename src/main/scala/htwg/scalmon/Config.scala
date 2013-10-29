@@ -14,7 +14,7 @@ class Parser extends scopt.OptionParser[Config]("scalmon") {
   val listG = List("g", "graphical")
   val listW = List("w", "web")
 
-  head("scalmon", "0.1")
+  head(BuildInfo.name, BuildInfo.version)
 
   opt[Int]('s', "size")
     .action { (x, c) => c.copy(size = x) }

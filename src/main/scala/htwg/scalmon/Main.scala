@@ -1,6 +1,6 @@
 package htwg.scalmon
 
-import htwg.scalmon.controller.Controller
+import htwg.scalmon.controller._
 import htwg.scalmon.model._
 import htwg.scalmon.view._
 import htwg.scalmon.UserInterface._
@@ -15,21 +15,16 @@ object Main extends App {
   }
 
   override def main(args: Array[String]) = {
-    val config = new Parser() parse (args, Config()) getOrElse { exit(); }
+    val config = new Parser() parse (args, Config()) getOrElse sys.exit()
 
-    println("scalmon is ready with " + config)
+    println(BuildInfo.name + " is ready with " + config)
 
     val model = new Model(config.size)
     val controller = new Controller(model)
     val view: View = generateView(config, model, controller)
     model.notifyListeners
 
-    println(new Animal("Pika").initHealthPoints)
-    println(new Animal("Mauzi").initHealthPoints)
-
-    val animalsA = Array(new Animal("Pika"))
-    val animalsB = Array(new Animal("Mauzi"))
-    model.playerA = new Player("Human", animalsA)
-    model.playerB = new Player("KI", animalsB)
+    controller.handle(SetPlayer("Human", List("Animal1", "Animal2")));
+    controller.handle(SetPlayer("KI", List("Animal3", "Animal4")));
   }
 }

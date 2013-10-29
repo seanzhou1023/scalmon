@@ -2,6 +2,7 @@ package htwg.scalmon.model
 
 import collection.mutable.Stack
 import org.scalatest._
+import scala.language.reflectiveCalls
 
 class AnimalSpec extends FlatSpec with Matchers {
   
