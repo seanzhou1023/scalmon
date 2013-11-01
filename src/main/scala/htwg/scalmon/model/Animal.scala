@@ -19,4 +19,11 @@ class Animal(val name: String) {
 
   def initHealthPoints = max(attributeValues(0) + attributeValues(1), attributeValues(2) + attributeValues(3)) * 2
   def initSpeed = max(attributeValues(4), attributeValues(5))
+
+  var healthPoints = initHealthPoints
+  def alive = healthPoints > 0
+
+  def reset {
+    healthPoints = initHealthPoints
+  }
 }
