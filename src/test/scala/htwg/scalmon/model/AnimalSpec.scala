@@ -33,4 +33,20 @@ class AnimalSpec extends FlatSpec with Matchers {
     fixture.pika.initSpeed should be(236)
     fixture.mauzi.initSpeed should be(185)
   }
+  
+  it should "have a base block value" in {
+    fixture.pika.baseBlockValue should be(43)
+    fixture.mauzi.baseBlockValue should be(53)
+  }
+  
+  it should "have a base attack value" in {
+    fixture.pika.baseAttackValue should be(166)
+    fixture.mauzi.baseAttackValue should be(216)
+  }
+  
+  it should "be able to attack and the other should block (minimize) the attack" in {
+    val f = fixture
+    f.pika sly f.mauzi
+    f.mauzi.healthPoints should be < f.mauzi.initHealthPoints
+  }
 }
