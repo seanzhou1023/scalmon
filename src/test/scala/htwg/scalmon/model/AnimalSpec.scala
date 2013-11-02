@@ -16,13 +16,13 @@ class AnimalSpec extends FlatSpec with Matchers {
     fixture.mauzi.name should be("Mauzi")
   }
 
-  it should "have a valid image" in {
-    val f = fixture
-    f.pika.image should not equal null
-    f.pika.image.getHeight(null) should be > 0
-    f.mauzi.image should not equal null
-    f.mauzi.image.getHeight(null) should be > 0
-  }
+//  it should "have a valid image" in {
+//    val f = fixture
+//    f.pika.image should not equal null
+//    f.pika.image.getHeight(null) should be > 0
+//    f.mauzi.image should not equal null
+//    f.mauzi.image.getHeight(null) should be > 0
+//  }
 
   it should "have maximum health points (calculated from the name)" in {
     fixture.pika.initHealthPoints should be(848)
@@ -46,7 +46,14 @@ class AnimalSpec extends FlatSpec with Matchers {
   
   it should "be able to attack and the other should block (minimize) the attack" in {
     val f = fixture
-    f.pika sly f.mauzi
-    f.mauzi.healthPoints should be < f.mauzi.initHealthPoints
+    f.pika attack f.mauzi
+    f.mauzi.healthPoints should be (753)
+  }
+
+  it should "have a element type, where a earth animal blocks good fire animal damage" in {
+    val pika = new Animal("Pika") with FireAnimal
+    val mauzi = new Animal("Mauzi") with EarthAnimal
+    pika attack mauzi
+    mauzi.healthPoints should be (859)
   }
 }
