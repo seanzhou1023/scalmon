@@ -16,7 +16,7 @@ class Animal(val name: String) extends AnimalType {
     .map("%02x".format(_))
     .map(x => Integer.parseInt(x, 16))
 
-  lazy val image = ImageLoader.load(name)
+  lazy val image = ImageLoader.get(name)
 
   def initHealthPoints = max(attributeValues(0) + attributeValues(1), attributeValues(2) + attributeValues(3)) * 2
   def initSpeed = max(attributeValues(4), attributeValues(5))

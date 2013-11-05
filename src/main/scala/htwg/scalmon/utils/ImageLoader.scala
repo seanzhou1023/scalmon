@@ -1,22 +1,39 @@
 package htwg.scalmon.utils
 
+import scala.collection.mutable.HashMap
 import scala.io.Source
+import java.io.File
 import java.net.URL
 import java.net.URLEncoder
-import java.awt.Image
+import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
+import htwg.scalmon.BuildInfo
 
 object ImageLoader {
-  def load(query: String) = {
+  private val cache = HashMap[String, BufferedImage]();
+
+  def get(query: String) = {
+    searchForFile(query)
+
+    if (cache.contains(query))
+      cache(query)
+    else
+      load(query)
+  }
+
+  private def load(query: String): BufferedImage = {
     val urls = getImageUrls(query)
-    var img: Image = null
 
     for (url <- urls) {
-      if (img == null)
-        img = tryReadImage(url)
+      val img = tryReadImage(url)
+
+      if (img != null) {
+        addCache(query, img, true)
+        return img
+      }
     }
 
-    img
+    null
   }
 
   private def getImageUrls(query: String) = {
@@ -43,6 +60,36 @@ object ImageLoader {
       case e: Exception =>
         println("tryReadImage: " + e)
         null
+    }
+  }
+
+  private def file(query: String) = {
+    val dir = new File(System.getProperty("java.io.tmpdir") + "/" + BuildInfo.name)
+    dir.mkdir();
+    new File(dir.getAbsolutePath() + "/" + query + ".png")
+  }
+
+  private def searchForFile(query: String) {
+    val f = file(query)
+
+    if (f.exists()) {
+      try {
+        addCache(query, ImageIO.read(f), false)
+      } catch {
+        case e: Exception => println("searchForFile: " + e)
+      }
+    }
+  }
+
+  private def addCache(query: String, img: BufferedImage, save: Boolean) {
+    cache += ((query, img))
+
+    if (save) {
+      try {
+        ImageIO.write(img, "png", file(query))
+      } catch {
+        case e: Exception => println("addCache: " + e)
+      }
     }
   }
 }
