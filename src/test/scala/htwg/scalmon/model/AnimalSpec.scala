@@ -47,13 +47,18 @@ class AnimalSpec extends FlatSpec with Matchers {
   it should "be able to attack and the other should block (minimize) the attack" in {
     val f = fixture
     f.pika attack f.mauzi
-    f.mauzi.healthPoints should be (753)
+    f.mauzi.healthPoints should be < (866)
+  }
+  
+  it should "have an elemental type" in {
+    val f = fixture
+    f.pika.animalType should be (AnimalType.WaterAnimal)
+    f.mauzi.animalType should be (AnimalType.AirAnimal)
   }
 
-  it should "have a element type, where a earth animal blocks good fire animal damage" in {
-    val pika = new Animal("Pika") with FireAnimal
-    val mauzi = new Animal("Mauzi") with EarthAnimal
-    pika attack mauzi
-    mauzi.healthPoints should be (859)
+  it should "have a element type, where a air animal blocks good water animal damage" in {
+    val f = fixture
+    f.pika attack f.mauzi
+    f.mauzi.healthPoints should be (859)
   }
 }
