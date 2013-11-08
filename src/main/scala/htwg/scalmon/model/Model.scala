@@ -11,4 +11,8 @@ class Model(val gameSize: Int) {
 
   var playerA: Player = null
   var playerB: Player = null
+
+  var state: State = Init()
+
+  def resetAnimals = (playerA.animals ++ playerB.animals).foreach(_.reset)
 }

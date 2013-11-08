@@ -5,7 +5,7 @@ import scala.language.reflectiveCalls
 
 class PlayerSpec extends FlatSpec with Matchers {
 
-  val fixture = new {
+  def fixture = new {
     val human = new Player("Human", Array(new Animal("A1")))
     val ai = new Player("AI", Array(new Animal("A2"), new Animal("A3"), new Animal("A4")))
   }

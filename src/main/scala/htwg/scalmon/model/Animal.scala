@@ -1,8 +1,9 @@
 package htwg.scalmon.model
 
 import java.security.MessageDigest
-import scala.math.max
+import scala.math.{ min, max }
 import htwg.scalmon.utils.ImageLoader
+import htwg.scalmon.controller.Ability
 
 object AnimalType extends Enumeration {
   type AnimalType = Value
@@ -30,16 +31,15 @@ class Animal(val name: String) {
     (attributeChoices(8) + attributeChoices(9) + attributeChoices(10)) / 2
 
   val animalType = attributeChoices(11) match {
-    case x if (x <= 64)  => AnimalType.EarthAnimal
+    case x if (x <= 64) => AnimalType.EarthAnimal
     case x if (x <= 128) => AnimalType.WaterAnimal
     case x if (x <= 192) => AnimalType.AirAnimal
     case x if (x <= 256) => AnimalType.FireAnimal
-    case _               => throw new Exception("no animal type defined")
+    case _ => throw new Exception("no animal type defined")
   }
 
   def is(comp: AnimalType.Value) = this.animalType == comp
 
-  // TODO: calculate AnimalType from name
   private def makeAttack = this.baseAttackValue // TODO: + Kritisch, Boni, Random Schwankung
 
   private def makeBlockOn(attacker: Animal) = {
@@ -72,21 +72,16 @@ class Animal(val name: String) {
 
   def attack(victim: Animal) = victim.block(this)
 
-  def heal(on: Animal) = {
-    val heal = on.healthPoints + this.baseAttackValue
-    if (heal > on.initHealthPoints)
-      on.healthPoints = on.initHealthPoints
-    else
-      on.healthPoints = heal
-  }
+  def heal(on: Animal) =
+    on.healthPoints = min(on.healthPoints + baseAttackValue, initHealthPoints)
 
-  def ability(idx: Int, on: Animal) = idx match {
-    case 1 => attack(on)
-    case 2 => heal(on)  // TODO: add more abilities
+  def ability(ability: Ability) = ability.skill match {
+    case 1 => attack(ability.target)
+    case 2 => heal(ability.target) // TODO: add more abilities
     case x => throw new Exception("ability " + x + " not available")
   }
-  
-  val enabledAbilities = 1 :: 2 :: Nil  // TODO: abhaenig vom namen machen + TESTS
+
+  val enabledAbilities = 1 :: 2 :: Nil // TODO: abhaenig vom namen machen + TESTS
 
   var healthPoints = initHealthPoints
 
