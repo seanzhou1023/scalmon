@@ -9,3 +9,7 @@ case class SetPlayer(val playerName: String, val animalNames: List[String]) exte
 case class Ability(val skill: Int, val target: Animal) extends Command
 
 case object RunStep extends Command
+
+case object Restart extends Command
+
+case object Quit extends Command

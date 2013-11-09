@@ -1,6 +1,7 @@
 package htwg.scalmon.controller
 
 import htwg.scalmon.model._
+import scala.util.Random
 
 class Controller(val model: Model) {
 
@@ -9,6 +10,8 @@ class Controller(val model: Model) {
       case x: SetPlayer => cmdSetPlayer(x)
       case x: Ability => cmdAbility(x)
       case RunStep => cmdRunStep
+      case Restart => cmdRestart
+      case Quit => sys.exit
       case other => println("unknown command: " + other)
     }
 
@@ -34,17 +37,17 @@ class Controller(val model: Model) {
 
   private def startFight {
     model.resetAnimals
-    startRound(0)
+    model.state = startRound(0)
   }
 
-  private def startRound(number: Int) {
-    val firstAliveOfA = model.playerA.animals.find(_.alive).get
+  private def startRound(number: Int) = {
+    val firstAliveOfA = model.playerA.animalsAlive.head
 
     val aiAttacks =
-      for (animal <- model.playerB.animals.filter(_.alive))
-        yield (animal, Ability(1, firstAliveOfA))
+      for (animal <- model.playerB.animalsAlive)
+        yield (animal, Ability(1, firstAliveOfA)) // TODO: better AI?
 
-    model.state = Round(number, firstAliveOfA, aiAttacks.toMap)
+    Round(number, firstAliveOfA, aiAttacks.toMap)
   }
 
   private def cmdAbility(cmd: Ability) {
@@ -52,12 +55,11 @@ class Controller(val model: Model) {
       case Round(number, chooseAttackFor, attacks) =>
         val newAttacks = attacks + ((chooseAttackFor, cmd))
 
-        model.state = model.playerA.animals
-          .filterNot(newAttacks.contains(_))
-          .find(_.alive) match {
-            case Some(next: Animal) => Round(number, next, newAttacks)
-            case None => RunRound(number,
+        model.state = model.playerA.animalsAlive
+          .filterNot(newAttacks.contains(_)) match {
+            case Nil => RunRound(number,
               newAttacks.toList.sortWith((a, b) => a._1.initSpeed > b._1.initSpeed))
+            case list => Round(number, list.head, newAttacks)
           }
 
       case _ => println("Attack not allowed in state " + model.state)
@@ -68,16 +70,34 @@ class Controller(val model: Model) {
     model.state match {
       case RunRound(number, attacks) =>
         val (animal, ability) = attacks.head
-        animal.ability(ability)
+        animal.ability(ensureTargetValid(ability))
 
-        // TODO: test if one player has won => other state !
-
-        attacks.tail match {
-          case Nil => startRound(number + 1)
-          case list => model.state = RunRound(number, list.filter(_._1.alive))
+        model.state = (model.playerA.beaten, model.playerB.beaten) match {
+          case (true, true) => GameOver(null) // both are beaten
+          case (false, true) => GameOver(model.playerA)
+          case (true, false) => GameOver(model.playerB)
+          case (false, false) =>
+            attacks.tail.filter(_._1.alive) match { // only animals which are not knocked out can attack
+              case Nil => startRound(number + 1) // next round
+              case list => RunRound(number, list)
+            }
         }
 
       case _ => println("RunStep not allowed in state " + model.state)
     }
+  }
+
+  private def cmdRestart {
+    model.state match {
+      case GameOver(_) => startFight
+      case _ => println("Restart not allowed in state " + model.state)
+    }
+  }
+
+  private def ensureTargetValid(ability: Ability) = ability.target.alive match {
+    case true => ability
+    case _ => // if the target animal is dead, randomly choose another of the same player
+      val owner = if (model.playerA.animals.contains(ability.target)) model.playerA else model.playerB
+      Ability(ability.skill, Random.shuffle(owner.animalsAlive).head)
   }
 }
