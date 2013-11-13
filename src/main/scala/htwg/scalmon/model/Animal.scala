@@ -31,11 +31,11 @@ class Animal(val name: String) {
     (attributeChoices(8) + attributeChoices(9) + attributeChoices(10)) / 2
 
   val animalType = attributeChoices(11) match {
-    case x if (x <= 64) => AnimalType.EarthAnimal
+    case x if (x <= 64)  => AnimalType.EarthAnimal
     case x if (x <= 128) => AnimalType.WaterAnimal
     case x if (x <= 192) => AnimalType.AirAnimal
     case x if (x <= 256) => AnimalType.FireAnimal
-    case _ => throw new Exception("no animal type defined")
+    case _               => throw new Exception("no animal type defined")
   }
 
   def is(comp: AnimalType.Value) = this.animalType == comp
@@ -44,29 +44,31 @@ class Animal(val name: String) {
 
   private def makeBlockOn(attacker: Animal) = {
     import AnimalType._
-    (attacker, this) match { // this is blocker. is he strong (>1) or weak (<1) against attacker elemental type
-      case (a, t) if ((a is EarthAnimal) && (t is WaterAnimal)) => (this.baseBlockValue * 0.6).toInt // speak: Water blocks weak Earth
-      case (a, t) if ((a is EarthAnimal) && (t is AirAnimal)) => this.baseBlockValue * 5
-      case (a, t) if ((a is EarthAnimal) && (t is FireAnimal)) => (this.baseBlockValue * 0.3).toInt
 
-      case (a, t) if ((a is WaterAnimal) && (t is EarthAnimal)) => this.baseBlockValue * 2
-      case (a, t) if ((a is WaterAnimal) && (t is AirAnimal)) => this.baseBlockValue * 3
-      case (a, t) if ((a is WaterAnimal) && (t is FireAnimal)) => (this.baseBlockValue * 1.5).toInt
+    baseBlockValue * ((attacker.animalType, this.animalType) match {
+      case (EarthAnimal, WaterAnimal) => 0.7
+      case (EarthAnimal, AirAnimal)   => 2.0
+      case (EarthAnimal, FireAnimal)  => 0.5
 
-      case (a, t) if ((a is AirAnimal) && (t is EarthAnimal)) => this.baseBlockValue * 5
-      case (a, t) if ((a is AirAnimal) && (t is WaterAnimal)) => (this.baseBlockValue * 0.5).toInt
-      case (a, t) if ((a is AirAnimal) && (t is FireAnimal)) => (this.baseBlockValue * 0.3).toInt
+      case (WaterAnimal, EarthAnimal) => 1.7
+      case (WaterAnimal, AirAnimal)   => 1.8
+      case (WaterAnimal, FireAnimal)  => 1.1
 
-      case (a, t) if ((a is FireAnimal) && (t is EarthAnimal)) => this.baseBlockValue * 4
-      case (a, t) if ((a is FireAnimal) && (t is WaterAnimal)) => this.baseBlockValue * 6
-      case (a, t) if ((a is FireAnimal) && (t is AirAnimal)) => this.baseBlockValue * 2
+      case (AirAnimal, EarthAnimal)   => 2.0
+      case (AirAnimal, WaterAnimal)   => 0.6
+      case (AirAnimal, FireAnimal)    => 0.5
 
-      case _ => this.baseBlockValue
-    }
+      case (FireAnimal, EarthAnimal)  => 1.6
+      case (FireAnimal, WaterAnimal)  => 2.0
+      case (FireAnimal, AirAnimal)    => 1.2
+
+      case _                          => 1.0
+    })
   }
 
   def block(attacker: Animal): Animal = {
-    this.healthPoints -= attacker.makeAttack - this.makeBlockOn(attacker) // TODO: + Kritisch, Boni, Random Schwankung
+    val dmg = 100 * attacker.makeAttack / this.makeBlockOn(attacker)
+    this.healthPoints -= dmg.toInt // TODO: + Kritisch, Boni, Random Schwankung
     this
   }
 

@@ -35,9 +35,9 @@ object JsonElement {
   def parse(json: String) = JSON.parseFull(json) map (JsonElement(_))
 
   def apply(any: Any): JsonElement = any match {
-    case x: Seq[_] => new ArrayElement(x)
+    case x: Seq[_]    => new ArrayElement(x)
     case x: Map[_, _] => new ComplexElement(x.asInstanceOf[Map[String, Any]])
-    case x => new PrimitiveElement(x)
+    case x            => new PrimitiveElement(x)
   }
 }
 

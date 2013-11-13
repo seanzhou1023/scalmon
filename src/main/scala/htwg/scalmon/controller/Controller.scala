@@ -8,11 +8,11 @@ class Controller(val model: Model) {
   def handle(command: Command) {
     command match {
       case x: SetPlayer => cmdSetPlayer(x)
-      case x: Ability => cmdAbility(x)
-      case RunStep => cmdRunStep
-      case Restart => cmdRestart
-      case Quit => cmdQuit
-      case other => println("unknown command: " + other)
+      case x: Ability   => cmdAbility(x)
+      case RunStep      => cmdRunStep
+      case Restart      => cmdRestart
+      case Quit         => cmdQuit
+      case other        => println("unknown command: " + other)
     }
 
     model.notifyListeners
@@ -73,12 +73,12 @@ class Controller(val model: Model) {
         animal.ability(ensureTargetValid(ability))
 
         model.state = (model.playerA.beaten, model.playerB.beaten) match {
-          case (true, true) => GameOver(null) // both are beaten
+          case (true, true)  => GameOver(null) // both are beaten
           case (false, true) => GameOver(model.playerA)
           case (true, false) => GameOver(model.playerB)
           case (false, false) =>
             attacks.tail.filter(_._1.alive) match { // only animals which are not knocked out can attack
-              case Nil => startRound(number + 1) // next round
+              case Nil  => startRound(number + 1) // next round
               case list => RunRound(number, list)
             }
         }
@@ -92,7 +92,7 @@ class Controller(val model: Model) {
   private def cmdRestart {
     model.state match {
       case GameOver(_) => startFight
-      case _ => println("Restart not allowed in state " + model.state)
+      case _           => println("Restart not allowed in state " + model.state)
     }
   }
 

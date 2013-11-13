@@ -59,6 +59,6 @@ class AnimalSpec extends FlatSpec with Matchers {
   it should "have a element type, where a air animal blocks good water animal damage" in {
     val f = fixture
     f.pika attack f.mauzi
-    f.mauzi.healthPoints should be(859)
+    f.mauzi.healthPoints should be(692)
   }
 }

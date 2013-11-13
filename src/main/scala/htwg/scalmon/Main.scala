@@ -8,9 +8,9 @@ import htwg.scalmon.UserInterface._
 object Main extends App {
   def generateView(config: Config, model: Model, controller: Controller): View = {
     config.userInterface match {
-      case Textual => new TUI(model, controller)
+      case Textual   => new TUI(model, controller)
       case Graphical => null
-      case Web => null
+      case Web       => null
     }
   }
 
