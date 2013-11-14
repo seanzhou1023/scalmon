@@ -37,10 +37,16 @@ class Animal(val name: String) {
     case x if (x <= 256) => AnimalType.FireAnimal
     case _               => throw new Exception("no animal type defined")
   }
+  
+  val criticalChance: Double = max(
+      attributeChoices(12), attributeChoices(13)) / 255.0 * 0.4
+  
+  def variationBetween(value: Int): Tuple2[Int, Int] = (
+      value - (value * (attributeChoices(14) / 255.0 * 0.3)).toInt,
+      value + (value * (attributeChoices(15) / 255.0 * 0.6)).toInt
+  )
 
-  def is(comp: AnimalType.Value) = this.animalType == comp
-
-  private def makeAttack = this.baseAttackValue // TODO: + Kritisch, Boni, Random Schwankung
+  private def makeAttack(add: Int) = this.baseAttackValue + add // TODO: + Kritisch, Boni, Random Schwankung
 
   private def makeBlockOn(attacker: Animal) = {
     import AnimalType._
@@ -66,8 +72,8 @@ class Animal(val name: String) {
     })
   }
 
-  def block(attacker: Animal): Animal = {
-    val dmg = 100 * attacker.makeAttack / this.makeBlockOn(attacker)
+  def block(attacker: Animal, additionalDmg: Int = 0): Animal = {
+    val dmg = 100 * attacker.makeAttack(additionalDmg) / this.makeBlockOn(attacker)
     this.healthPoints -= dmg.toInt // TODO: + Kritisch, Boni, Random Schwankung
     this
   }
@@ -76,10 +82,25 @@ class Animal(val name: String) {
 
   def heal(on: Animal) =
     on.healthPoints = min(on.healthPoints + baseAttackValue, initHealthPoints)
+    
+  //def spreadHeal = 
 
+  def sacrificeAttack(victim: Animal) = {
+    val additionalDmg = this.baseAttackValue
+    this.healthPoints -= additionalDmg / 2
+    victim.block(this, additionalDmg)
+  }
+  
+  //def taunt =  // spotten
+    
+  //def fade =  // verblassen
+    
+  //def sacrificeOtherAttack = 
+    
   def ability(ability: Ability) = ability.skill match {
     case 1 => attack(ability.target)
     case 2 => heal(ability.target) // TODO: add more abilities
+    case 3 => sacrificeAttack(ability.target)
     case x => throw new Exception("ability " + x + " not available")
   }
 
