@@ -1,7 +1,7 @@
 package htwg.scalmon.model
 
 import java.security.MessageDigest
-import scala.math.{ min, max }
+import scala.math.{ min, max, floor, random }
 import htwg.scalmon.utils.ImageLoader
 import htwg.scalmon.controller.Ability
 
@@ -10,7 +10,7 @@ object AnimalType extends Enumeration {
   val EarthAnimal, WaterAnimal, AirAnimal, FireAnimal = Value
 }
 
-class Animal(val name: String) {
+class Animal(val name: String, val predictable: Boolean = false) {
 
   val attributeChoices: Seq[Int] = MessageDigest.getInstance("MD5")
     .digest(name.toUpperCase.getBytes)
@@ -37,21 +37,41 @@ class Animal(val name: String) {
     case x if (x <= 256) => AnimalType.FireAnimal
     case _               => throw new Exception("no animal type defined")
   }
-  
-  val criticalChance: Double = max(
-      attributeChoices(12), attributeChoices(13)) / 255.0 * 0.4
-  
-  def variationBetween(value: Int): Tuple2[Int, Int] = (
-      value - (value * (attributeChoices(14) / 255.0 * 0.3)).toInt,
-      value + (value * (attributeChoices(15) / 255.0 * 0.6)).toInt
-  )
 
-  private def makeAttack(add: Int) = this.baseAttackValue + add // TODO: + Kritisch, Boni, Random Schwankung
+  val criticalChance: Double = max(
+    attributeChoices(12), attributeChoices(13)) / 255.0 * 0.4
+
+  /*
+   * From: http://stackoverflow.com/questions/20018423/
+   */
+  val rollCriticalHit: Boolean = random <= criticalChance
+
+  def variationBetween(value: Int): Tuple2[Int, Int] = (
+    value - (value * (attributeChoices(14) / 255.0 * 0.3)).toInt,
+    value + (value * (attributeChoices(15) / 255.0 * 0.6)).toInt)
+
+  /*
+   * From: http://stackoverflow.com/questions/4959975/
+   */
+  def valueBetween(from: Int, to: Int): Int =
+    floor(random * (to - from + 1) + from).toInt
+
+  private def makeAttack(add: Int): Int = {
+    if (predictable)
+      baseAttackValue + add
+    else {
+      var base = (baseAttackValue + add).toDouble
+      if (rollCriticalHit)
+        base = base * 1.5
+      val (from, to) = variationBetween(base.toInt)
+      valueBetween(from, to)
+    }
+  }
 
   private def makeBlockOn(attacker: Animal) = {
     import AnimalType._
 
-    baseBlockValue * ((attacker.animalType, this.animalType) match {
+    var base = baseBlockValue * ((attacker.animalType, this.animalType) match {
       case (EarthAnimal, WaterAnimal) => 0.7
       case (EarthAnimal, AirAnimal)   => 2.0
       case (EarthAnimal, FireAnimal)  => 0.5
@@ -70,11 +90,18 @@ class Animal(val name: String) {
 
       case _                          => 1.0
     })
+
+    if (predictable)
+      base
+    else {
+      val (from, to) = variationBetween(base.toInt)
+      valueBetween(from, to)
+    }
   }
 
   def block(attacker: Animal, additionalDmg: Int = 0): Animal = {
     val dmg = 100 * attacker.makeAttack(additionalDmg) / this.makeBlockOn(attacker)
-    this.healthPoints -= dmg.toInt // TODO: + Kritisch, Boni, Random Schwankung
+    this.healthPoints -= dmg.toInt
     this
   }
 
@@ -82,7 +109,7 @@ class Animal(val name: String) {
 
   def heal(on: Animal) =
     on.healthPoints = min(on.healthPoints + baseAttackValue, initHealthPoints)
-    
+
   //def spreadHeal = 
 
   def sacrificeAttack(victim: Animal) = {
@@ -90,13 +117,13 @@ class Animal(val name: String) {
     this.healthPoints -= additionalDmg / 2
     victim.block(this, additionalDmg)
   }
-  
+
   //def taunt =  // spotten
-    
+
   //def fade =  // verblassen
-    
+
   //def sacrificeOtherAttack = 
-    
+
   def ability(ability: Ability) = ability.skill match {
     case 1 => attack(ability.target)
     case 2 => heal(ability.target) // TODO: add more abilities
