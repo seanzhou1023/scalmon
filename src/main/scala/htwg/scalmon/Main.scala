@@ -9,7 +9,7 @@ object Main extends App {
   def generateView(config: Config, model: Model, controller: Controller): View = {
     config.userInterface match {
       case Textual   => new TUI(model, controller)
-      case Graphical => null
+      case Graphical => new GUI(model, controller)
       case Web       => null
     }
   }
@@ -26,5 +26,7 @@ object Main extends App {
 
     controller.handle(SetPlayer("Human", List("Animal1", "Animal2")));
     controller.handle(SetPlayer("KI", List("Animal3", "Animal4")));
+    
+    view.show
   }
 }

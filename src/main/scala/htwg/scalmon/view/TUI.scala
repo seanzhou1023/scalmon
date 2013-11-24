@@ -5,4 +5,5 @@ import htwg.scalmon.controller.Controller
 
 class TUI(_model: Model, _controller: Controller) extends View(_model, _controller) {
   def update = println("TUI update")
+  def show = println("TUI shows up")
 }
