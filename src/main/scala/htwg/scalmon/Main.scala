@@ -6,11 +6,12 @@ import htwg.scalmon.view._
 import htwg.scalmon.UserInterface._
 
 object Main extends App {
-  def generateView(config: Config, model: Model, controller: Controller): View = {
+  def generateView(config: Config, model: Model, controller: Controller): List[View] = {
     config.userInterface match {
-      case Textual   => new TUI(model, controller)
-      case Graphical => new GUI(model, controller)
-      case Web       => null
+      case Textual   => new TUI(model, controller) :: Nil
+      case Graphical => new GUI(model, controller) :: Nil
+      case Web       => Nil
+      case All => List(new TUI(model, controller), new GUI(model,controller))
     }
   }
 
@@ -21,12 +22,12 @@ object Main extends App {
 
     val model = new Model(config.size)
     val controller = new Controller(model)
-    val view: View = generateView(config, model, controller)
+    val view = generateView(config, model, controller)
     model.notifyListeners
 
     controller.handle(SetPlayer("Human", List("Animal1", "Animal2")));
     controller.handle(SetPlayer("KI", List("Animal3", "Animal4")));
     
-    view.show
+    view.foreach(_.show)
   }
 }

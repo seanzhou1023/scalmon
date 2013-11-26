@@ -2,7 +2,7 @@ package htwg.scalmon
 
 object UserInterface extends Enumeration {
   type UserInterface = Value
-  val Textual, Graphical, Web = Value
+  val Textual, Graphical, Web, All = Value
 }
 
 import UserInterface._
@@ -13,6 +13,9 @@ class Parser extends scopt.OptionParser[Config]("scalmon") {
   val listT = List("t", "textual")
   val listG = List("g", "graphical")
   val listW = List("w", "web")
+  val listA = List("a", "all")
+  
+  val listValid = listT ::: listG ::: listW ::: listA
 
   head(BuildInfo.name, BuildInfo.version)
 
@@ -27,10 +30,11 @@ class Parser extends scopt.OptionParser[Config]("scalmon") {
         case s if (listT.contains(s)) => Textual
         case s if (listG.contains(s)) => Graphical
         case s if (listW.contains(s)) => Web
+        case s if (listA.contains(s)) => All
       })
     }
-    .text("Specify the user interface with [" + (listT ::: listG ::: listW).mkString("|") + "].")
-    .validate { x => if ((listT ::: listG ::: listW).contains(x)) success else failure("Invalid value '" + x + "' for option --ui") }
+    .text("Specify the user interface with [" + listValid.mkString("|") + "].")
+    .validate { x => if (listValid.contains(x)) success else failure("Invalid value '" + x + "' for option --ui") }
 
   help("help") text "Prints usage text."
 
