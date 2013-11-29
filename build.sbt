@@ -2,7 +2,7 @@ name := "scalmon"
 
 version := "0.1.0"
 
-scalaVersion := "2.10.2"
+scalaVersion := "2.10.3"
 
 resolvers ++= Seq(
   "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/",
@@ -13,7 +13,7 @@ resolvers ++= Seq(
 )
 
 libraryDependencies ++= Seq(
-  "org.scala-lang" % "scala-swing" % "2.10.2",
+  "org.scala-lang" % "scala-swing" % "2.10.3",
   "com.github.scopt" %% "scopt" % "3.1.0",
   "org.scalatest" % "scalatest_2.10" % "2.0.RC3" % "test"
   //"play" % "play_2.10" % "2.1-SNAPSHOT"
