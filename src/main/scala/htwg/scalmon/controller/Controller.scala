@@ -15,7 +15,7 @@ class Controller(val model: Model) {
       case other        => println("unknown command: " + other)
     }
 
-    model.notifyListeners
+    model.notifyListeners()
   }
 
   private def cmdSetPlayer(cmd: SetPlayer) {
@@ -70,7 +70,9 @@ class Controller(val model: Model) {
     model.state match {
       case RunRound(number, attacks) =>
         val (animal, ability) = attacks.head
-        animal.ability(ensureTargetValid(ability))
+        val target = ensureTargetValid(ability)
+        val info = animal.ability(target)
+        model.notifyListeners(Option(info))
 
         model.state = (model.playerA.beaten, model.playerB.beaten) match {
           case (true, true)  => GameOver(null) // both are beaten

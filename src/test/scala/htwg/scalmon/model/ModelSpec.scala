@@ -60,14 +60,15 @@ class ModelSpec extends FlatSpec with Matchers with GivenWhenThen {
     val ls = new {
       val l1, l2 = new Listener {
         var count = 0
-        def update = count += 1
+        var lastInfo: Option[AbilityInfo] = None
+        def update(info: Option[AbilityInfo]) = { count += 1; lastInfo = info }
       }
 
       def count = (l1.count, l2.count)
     }
 
     val m = fixture.m1
-    m.notifyListeners
+    m.notifyListeners()
 
     Then("they should not be notified")
     ls.count should be(0, 0)
@@ -77,21 +78,31 @@ class ModelSpec extends FlatSpec with Matchers with GivenWhenThen {
     ls.count should be(0, 0)
 
     Then("it should be notified correctly")
-    m.notifyListeners
+    m.notifyListeners()
     ls.count should be(1, 0)
 
     When("multiple listeners are added")
     m.addListener(ls.l2)
 
     Then("all of them should be notified")
-    m.notifyListeners
+    m.notifyListeners()
     ls.count should be(2, 1)
+    ls.l1.lastInfo should be(None)
+    ls.l2.lastInfo should be(None)
+
+    When("an ability info is included into the notification")
+    m.notifyListeners(Option(AttackInfo(null, null, 100)))
+
+    Then("the listener should have this info received")
+    ls.count should be(3, 2)
+    ls.l1.lastInfo shouldBe a[Some[AttackInfo]]
+    ls.l2.lastInfo shouldBe a[Some[AttackInfo]]
 
     When("a listener is removed")
     m.removeListener(ls.l1)
 
     Then("it should not be notified anymore")
-    m.notifyListeners
-    ls.count should be(2, 2)
+    m.notifyListeners()
+    ls.count should be(3, 3)
   }
 }

@@ -99,16 +99,19 @@ class Animal(val name: String, val predictable: Boolean = false) {
     }
   }
 
-  def block(attacker: Animal, additionalDmg: Int = 0): Animal = {
+  def block(attacker: Animal, additionalDmg: Int = 0) = {
     val dmg = 100 * attacker.makeAttack(additionalDmg) / this.makeBlockOn(attacker)
     this.healthPoints -= dmg.toInt
-    this
+    AttackInfo(attacker, this, dmg.toInt)
   }
 
   def attack(victim: Animal) = victim.block(this)
 
-  def heal(on: Animal) =
-    on.healthPoints = min(on.healthPoints + baseAttackValue, initHealthPoints)
+  def heal(on: Animal) = {
+    val health = min(this.baseAttackValue, on.initHealthPoints - on.healthPoints)
+    on.healthPoints += health
+    HealInfo(this, on, health)
+  }
 
   //def spreadHeal = 
 
@@ -124,7 +127,7 @@ class Animal(val name: String, val predictable: Boolean = false) {
 
   //def sacrificeOtherAttack = 
 
-  def ability(ability: Ability) = ability.skill match {
+  def ability(ability: Ability): AbilityInfo = ability.skill match {
     case 1 => attack(ability.target)
     case 2 => heal(ability.target) // TODO: add more abilities
     case 3 => sacrificeAttack(ability.target)

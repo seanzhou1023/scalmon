@@ -1,11 +1,11 @@
 package htwg.scalmon.view
 
 import htwg.scalmon.BuildInfo
-import htwg.scalmon.model.Model
+import htwg.scalmon.model.{Model, AbilityInfo}
 import htwg.scalmon.controller.Controller
 
 class GUI(_model: Model, _controller: Controller) extends View(_model, _controller) {
-  def update = println("GUI update")
+  def update(info: Option[AbilityInfo]) = println("GUI update: " + info)
 
   def show = {
     val myFrame = new ScalmonFrame

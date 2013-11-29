@@ -22,12 +22,8 @@ object Main extends App {
 
     val model = new Model(config.size)
     val controller = new Controller(model)
-    val view = generateView(config, model, controller)
-    model.notifyListeners
+    val views = generateView(config, model, controller)
 
-    controller.handle(SetPlayer("Human", List("Animal1", "Animal2")));
-    controller.handle(SetPlayer("KI", List("Animal3", "Animal4")));
-    
-    view.foreach(_.show)
+    views.foreach(_.show)
   }
 }

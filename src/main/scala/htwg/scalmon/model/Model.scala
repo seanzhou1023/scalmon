@@ -7,7 +7,7 @@ class Model(val gameSize: Int) {
 
   def addListener(ln: Listener) = listeners = ln :: listeners
   def removeListener(ln: Listener) = listeners = listeners.filterNot(_ == ln)
-  def notifyListeners = listeners.foreach(_.update)
+  def notifyListeners(info: Option[AbilityInfo] = None) = listeners.foreach(_.update(info))
 
   var playerA: Player = null
   var playerB: Player = null
