@@ -1,7 +1,7 @@
 package htwg.scalmon.view
 
 import htwg.scalmon.BuildInfo
-import htwg.scalmon.model.{Model, AbilityInfo}
+import htwg.scalmon.model.{ Model, AbilityInfo }
 import htwg.scalmon.controller.Controller
 
 class GUI(_model: Model, _controller: Controller) extends View(_model, _controller) {

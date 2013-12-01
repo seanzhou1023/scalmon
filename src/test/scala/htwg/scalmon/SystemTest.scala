@@ -15,7 +15,7 @@ class SystemTest extends FlatSpec with Matchers {
       for (animal <- controller.model.playerA.animalsAlive)
         controller.handle(Ability(1, controller.model.playerB.animalsAlive(0))) // dummy AI: attack first animal of B
 
-      controller.model.state shouldBe a [RunRound]
+      controller.model.state shouldBe a[RunRound]
 
       while (controller.model.state.isInstanceOf[RunRound]) // run all abilities
         controller.handle(RunStep)
@@ -26,7 +26,7 @@ class SystemTest extends FlatSpec with Matchers {
     // init
     val config = Config(UserInterface.Textual, size)
     val model = new Model(config.size)
-    model.state shouldBe a [Init]
+    model.state shouldBe a[Init]
 
     val controller = new Controller(model) {
       var quit = false;
@@ -38,22 +38,22 @@ class SystemTest extends FlatSpec with Matchers {
     val animalsB = (0 until config.size).toList.map("AnimalB" + _)
     controller.handle(SetPlayer("Human", animalsA))
     controller.handle(SetPlayer("KI", animalsB))
-    model.state shouldBe a [Round]
+    model.state shouldBe a[Round]
 
     // start fight
     simulateRounds(controller)
-    model.state shouldBe a [GameOver]
+    model.state shouldBe a[GameOver]
 
     // fight again
     controller.handle(Restart)
-    model.state shouldBe a [Round]
+    model.state shouldBe a[Round]
 
     simulateRounds(controller)
-    model.state shouldBe a [GameOver]
+    model.state shouldBe a[GameOver]
 
     // fight again and quit
     controller.handle(Restart)
-    model.state shouldBe a [Round]
+    model.state shouldBe a[Round]
 
     simulateRounds(controller, 1)
     controller.handle(Quit)
