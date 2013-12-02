@@ -12,7 +12,7 @@ class Controller(val model: Model) {
       case RunStep      => cmdRunStep
       case Restart      => cmdRestart
       case Quit         => cmdQuit
-      case other        => println("unknown command: " + other)
+      case other        => throw new IllegalArgumentException("unknown command: " + other)
     }
 
     model.notifyListeners()
