@@ -11,7 +11,7 @@ object Main extends App {
       case Textual   => new TUI(model, controller) :: Nil
       case Graphical => new GUI(model, controller) :: Nil
       case Web       => Nil
-      case All => List(new TUI(model, controller), new GUI(model,controller))
+      case All       => List(new TUI(model, controller), new GUI(model, controller))
     }
   }
 
@@ -25,5 +25,8 @@ object Main extends App {
     val views = generateView(config, model, controller)
 
     views.foreach(_.show)
+    val playerA = new Player("A", Array(new Animal("Pikachu"), new Animal("Fette Katze")))
+    val playerB = new Player("B", Array(new Animal("Mauzi"), new Animal("Arbok")))
+    views.foreach(_.update((playerA, playerB)))
   }
 }

@@ -16,9 +16,24 @@ object ImageLoader {
     searchForFile(query)
 
     if (cache.contains(query))
-      cache(query)
+      createResizedCopy(cache(query), 200, 200, true)
     else
-      load(query)
+      createResizedCopy(load(query), 200, 200, true)
+  }
+
+  /*
+   * Source: http://stackoverflow.com/questions/244164/
+   */
+  def createResizedCopy(originalImage: BufferedImage,
+                        scaledWidth: Int, scaledHeight: Int,
+                        preserveAlpha: Boolean): BufferedImage = {
+    val imageType: Int = if (preserveAlpha)
+      BufferedImage.TYPE_INT_ARGB else BufferedImage.TYPE_INT_RGB
+    val scaledBI = new BufferedImage(scaledWidth, scaledHeight, imageType)
+    val g = scaledBI.createGraphics()
+    g.drawImage(originalImage, 0, 0, scaledWidth, scaledHeight, null);
+    g.dispose()
+    scaledBI
   }
 
   private def load(query: String): BufferedImage = {
@@ -40,7 +55,9 @@ object ImageLoader {
     var urls = Seq[String]()
 
     try {
-      val url = "https://ajax.googleapis.com/ajax/services/search/images?v=1.0&q=" + URLEncoder.encode(query, "UTF-8")
+      val url =
+        "https://ajax.googleapis.com/ajax/services/search/images?v=1.0&q=" +
+          URLEncoder.encode(query, "UTF-8")
       val json = JsonElement.parse(Source.fromURL(url).mkString)
       val results = json.get.responseData.results
 
@@ -64,7 +81,8 @@ object ImageLoader {
   }
 
   private def file(query: String) = {
-    val dir = new File(System.getProperty("java.io.tmpdir") + "/" + BuildInfo.name)
+    val dir = new File(System.getProperty("java.io.tmpdir") + "/" +
+      BuildInfo.name)
     dir.mkdir();
     new File(dir.getAbsolutePath() + "/" + query + ".png")
   }

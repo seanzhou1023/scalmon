@@ -127,14 +127,14 @@ class Animal(val name: String, val predictable: Boolean = false) {
 
   //def sacrificeOtherAttack = 
 
+  // def stackAttack = // mehrfach Angriff (3-5 mal), innerhalb des Angriffs erhoeht sich die Krit Chance temporaer
+
   def ability(ability: Ability): AbilityInfo = ability.skill match {
     case 1 => attack(ability.target)
     case 2 => heal(ability.target) // TODO: add more abilities
     case 3 => sacrificeAttack(ability.target)
     case x => throw new Exception("ability " + x + " not available")
   }
-
-  val enabledAbilities = 1 :: 2 :: Nil // TODO: abhaenig vom namen machen + TESTS
 
   var healthPoints = initHealthPoints
 

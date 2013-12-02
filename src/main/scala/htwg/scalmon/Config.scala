@@ -14,7 +14,7 @@ class Parser extends scopt.OptionParser[Config]("scalmon") {
   val listG = List("g", "graphical")
   val listW = List("w", "web")
   val listA = List("a", "all")
-  
+
   val listValid = listT ::: listG ::: listW ::: listA
 
   head(BuildInfo.name, BuildInfo.version)
