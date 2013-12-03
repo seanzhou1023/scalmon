@@ -11,7 +11,7 @@ class Controller(val model: Model) {
       case x: Ability   => cmdAbility(x)
       case RunStep      => cmdRunStep
       case Restart      => cmdRestart
-      case Quit         => cmdQuit
+      case Quit         => model.state = Exited
       case other        => throw new IllegalArgumentException("unknown command: " + other)
     }
 
@@ -88,8 +88,6 @@ class Controller(val model: Model) {
       case _ => println("RunStep not allowed in state " + model.state)
     }
   }
-
-  def cmdQuit { sys.exit }
 
   private def cmdRestart {
     model.state match {

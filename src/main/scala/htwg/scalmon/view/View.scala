@@ -9,5 +9,4 @@ abstract class View(val model: Model, val controller: Controller) extends Listen
 
   def show
   def update(info: Option[AbilityInfo])
-  def update(players: (Player, Player))
 }

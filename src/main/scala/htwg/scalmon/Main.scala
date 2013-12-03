@@ -15,8 +15,13 @@ object Main extends App {
     }
   }
 
-  override def main(args: Array[String]) = {
-    val config = new Parser() parse (args, Config()) getOrElse sys.exit()
+  override def main(args: Array[String]): Unit = {
+    val configOpt = new Parser() parse (args, Config())
+
+    if (configOpt == None)
+      return ;
+
+    val config = configOpt.get
 
     println(BuildInfo.name + " is ready with " + config)
 
@@ -25,8 +30,9 @@ object Main extends App {
     val views = generateView(config, model, controller)
 
     views.foreach(_.show)
-    val playerA = new Player("A", Array(new Animal("Pikachu"), new Animal("Fette Katze")))
-    val playerB = new Player("B", Array(new Animal("Mauzi"), new Animal("Arbok")))
-    views.foreach(_.update((playerA, playerB)))
+
+    // test - replace by dialog to add users
+    controller.handle(SetPlayer("A", List("Pikachu", "Fette Katze")))
+    controller.handle(SetPlayer("B", List("Mauzi", "Arbok")))
   }
 }

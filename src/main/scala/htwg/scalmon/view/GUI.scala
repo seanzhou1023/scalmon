@@ -2,41 +2,45 @@ package htwg.scalmon.view
 
 import htwg.scalmon.BuildInfo
 import htwg.scalmon.model._
-import htwg.scalmon.controller.Controller
+import htwg.scalmon.controller._
 
 class GUI(_model: Model, _controller: Controller) extends View(_model, _controller) {
-  var frame: swing.Frame = new InitFrame
+  val initFrame = new InitFrame(model, controller)
+  lazy val mainFrame = new ScalmonFrame(model, controller)
 
-  def update(info: Option[AbilityInfo]) = println("GUI update: " + info)
-  def update(players: (Player, Player)) = {
-    val oldframe = frame
-    frame = new ScalmonFrame(players)
-    show
-    hide(oldframe)
+  def update(info: Option[AbilityInfo]) = {
+    model.state match {
+      case Init(_) => // nothing to do
+      case Exited  => { initFrame.dispose; mainFrame.dispose }
+      case _       => { initFrame.close; mainFrame.update(info) }
+    }
   }
 
-  def show = {
-    frame.visible = true
-  }
-
-  def hide(context: swing.Frame) = {
-    context.dispose
-    context.close
-  }
-
+  def show = initFrame.visible = true
 }
 
-class ScalmonFrame(players: (Player, Player)) extends swing.Frame {
+class ScalmonFrame(val model: Model, val controller: Controller) extends swing.Frame {
   title = BuildInfo.name + " " + BuildInfo.version
   contents = new swing.BorderPanel {
     add(new swing.Label("Battlefield"), swing.BorderPanel.Position.Center)
-    add(drawPlayers(players._1), swing.BorderPanel.Position.North)
-    add(drawPlayers(players._2), swing.BorderPanel.Position.South)
+    add(drawPlayers(model.playerA), swing.BorderPanel.Position.North)
+    add(drawPlayers(model.playerB), swing.BorderPanel.Position.South)
+  }
+
+  override def closeOperation {
+    controller.handle(Quit)
+    super.closeOperation
+  }
+
+  def update(info: Option[AbilityInfo]) = {
+    visible = true
+    // TODO GUI: actualize text of views
   }
 
   def drawPlayers(player: Player) = new swing.FlowPanel {
-    for (animal <- player.animals)
-      contents += drawAnimal(animal)
+    if (player != null)
+      for (animal <- player.animals)
+        contents += drawAnimal(animal)
   }
 
   def drawAnimal(a: Animal) = new swing.BoxPanel(swing.Orientation.Vertical) {
@@ -59,7 +63,7 @@ class ScalmonFrame(players: (Player, Player)) extends swing.Frame {
       s"<html>HEAL: ${a.variationBetween(a.baseAttackValue)}<br /></html>")
     contents += new swing.Button(
       s"<html>DMG: ${a.variationBetween(a.baseAttackValue * 2)}<br />" +
-      s"SELF DMG:${a.variationBetween(a.baseAttackValue / 2)}</html>")
+      s"SELF DMG: ${a.variationBetween(a.baseAttackValue / 2)}</html>")
   }
 
   def roundAt(p: Int)(n: Double): Double = {
@@ -68,7 +72,13 @@ class ScalmonFrame(players: (Player, Player)) extends swing.Frame {
   }
 }
 
-class InitFrame extends swing.Frame {
+class InitFrame(val model: Model, val controller: Controller) extends swing.Frame {
   title = BuildInfo.name + " " + BuildInfo.version
   contents = new swing.Label("Welcome to SCALMON!\nPlease wait...")
+  // TODO GUI: input dialogs
+
+  override def closeOperation {
+    controller.handle(Quit)
+    super.closeOperation
+  }
 }

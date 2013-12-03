@@ -28,10 +28,7 @@ class SystemTest extends FlatSpec with Matchers {
     val model = new Model(config.size)
     model.state shouldBe a[Init]
 
-    val controller = new Controller(model) {
-      var quit = false;
-      override def cmdQuit = quit = true;
-    }
+    val controller = new Controller(model)
 
     // init players
     val animalsA = (0 until config.size).toList.map("AnimalA" + _)
@@ -57,18 +54,18 @@ class SystemTest extends FlatSpec with Matchers {
 
     simulateRounds(controller, 1)
     controller.handle(Quit)
-    controller.quit
+    controller.model.state should be(Exited)
   }
 
   "A Systemtest" should "run the game with size 1" in {
-    testGame(1) should be(true)
+    testGame(1)
   }
 
   it should "run the game with size 2" in {
-    testGame(2) should be(true)
+    testGame(2)
   }
 
   it should "run the game with size 9" in {
-    testGame(9) should be(true)
+    testGame(9)
   }
 }

@@ -12,6 +12,8 @@ case class RunRound(val number: Int, val attacks: List[(Animal, Ability)]) exten
 
 case class GameOver(val winner: Player) extends State
 
+case object Exited extends State
+
 abstract class AbilityInfo
 
 case class AttackInfo(val attacker: Animal, val victim: Animal, val damage: Int) extends AbilityInfo
