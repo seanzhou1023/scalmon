@@ -17,9 +17,9 @@ class PlayerSpec extends FlatSpec with Matchers with GivenWhenThen {
 
   it should "have a valid image" in {
     fixture.human.image should not equal null
-    fixture.human.image.getHeight(null) should be > 0
+    fixture.human.image.get().getHeight(null) should be > 0
     fixture.ai.image should not equal null
-    fixture.ai.image.getHeight(null) should be > 0
+    fixture.ai.image.get().getHeight(null) should be > 0
   }
 
   it should "have some animals" in {

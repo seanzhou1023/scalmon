@@ -1,30 +1,58 @@
 package htwg.scalmon.utils
 
+import scala.concurrent.future
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.collection.mutable.HashMap
 import scala.io.Source
+import scala.swing.Image
 import java.io.File
-import java.net.URL
-import java.net.URLEncoder
+import java.net.{ URL, URLEncoder }
+import java.security.MessageDigest
 import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
 import htwg.scalmon.BuildInfo
+import scala.swing.UIElement
+
+class ImageWrapper {
+  private var image: Image = ImageLoader.emptyImage
+  private var listeners = List[UIElement]()
+
+  def get(elem: UIElement = null) = {
+    if (elem != null && !listeners.contains(elem))
+      listeners = elem :: listeners
+
+    image
+  }
+
+  def set(img: Image) {
+    image = img
+    listeners.foreach(_.repaint)
+  }
+}
 
 object ImageLoader {
-  private val cache = HashMap[String, BufferedImage]();
+  val width = 200
+  val height = 200
+
+  private val cache = HashMap[String, ImageWrapper]()
+
+  val emptyImage = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_BINARY)
 
   def get(query: String) = {
-    searchForFile(query)
+    cache.synchronized {
+      if (!cache.contains(query)) {
+        cache += ((query, new ImageWrapper))
+        load(query)
+      }
 
-    if (cache.contains(query))
-      createResizedCopy(cache(query), 200, 200, true)
-    else
-      createResizedCopy(load(query), 200, 200, true)
+      cache(query)
+    }
   }
 
   /*
    * Source: http://stackoverflow.com/questions/244164/
    */
-  def createResizedCopy(originalImage: BufferedImage,
+  def createResizedCopy(originalImage: Image,
                         scaledWidth: Int, scaledHeight: Int,
                         preserveAlpha: Boolean): BufferedImage = {
     val imageType: Int = if (preserveAlpha)
@@ -36,7 +64,27 @@ object ImageLoader {
     scaledBI
   }
 
-  private def load(query: String): BufferedImage = {
+  private def load(query: String) {
+    if (!searchForFile(query))
+      future { loadExtern(query) }
+  }
+
+  private def searchForFile(query: String): Boolean = {
+    val f = file(query)
+
+    if (f.exists()) {
+      try {
+        addCache(query, ImageIO.read(f), false)
+        return true
+      } catch {
+        case e: Exception => println("searchForFile: " + e)
+      }
+    }
+
+    false
+  }
+
+  private def loadExtern(query: String) {
     val urls = getImageUrls(query)
 
     for (url <- urls) {
@@ -44,11 +92,9 @@ object ImageLoader {
 
       if (img != null) {
         addCache(query, img, true)
-        return img
+        return
       }
     }
-
-    null
   }
 
   private def getImageUrls(query: String) = {
@@ -84,23 +130,15 @@ object ImageLoader {
     val dir = new File(System.getProperty("java.io.tmpdir") + "/" +
       BuildInfo.name)
     dir.mkdir();
-    new File(dir.getAbsolutePath() + "/" + query + ".png")
-  }
-
-  private def searchForFile(query: String) {
-    val f = file(query)
-
-    if (f.exists()) {
-      try {
-        addCache(query, ImageIO.read(f), false)
-      } catch {
-        case e: Exception => println("searchForFile: " + e)
-      }
-    }
+    val filename = MessageDigest.getInstance("MD5").digest(query.getBytes()).map(b => Integer.toHexString(0xff & b)).mkString("")
+    new File(dir.getAbsolutePath() + "/" + filename + ".png")
   }
 
   private def addCache(query: String, img: BufferedImage, save: Boolean) {
-    cache += ((query, img))
+    cache.synchronized {
+      val wrapper = cache(query)
+      wrapper.set(createResizedCopy(img, width, height, true))
+    }
 
     if (save) {
       try {

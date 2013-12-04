@@ -3,6 +3,7 @@ package htwg.scalmon.view
 import htwg.scalmon.BuildInfo
 import htwg.scalmon.model._
 import htwg.scalmon.controller._
+import htwg.scalmon.utils.ImageWrapper
 
 class GUI(_model: Model, _controller: Controller) extends View(_model, _controller) {
   val initFrame = new InitFrame(model, controller)
@@ -32,6 +33,14 @@ class Label(val format: String, args: String*) extends swing.Label {
   setArgs(args: _*)
 }
 
+class ImageLabel(val imageWrapper: ImageWrapper) extends swing.Label {
+  icon = new javax.swing.ImageIcon(imageWrapper.get(this))
+
+  override def repaint {
+    icon = new javax.swing.ImageIcon(imageWrapper.get())
+  }
+}
+
 class ScalmonFrame(val model: Model, val controller: Controller) extends swing.Frame {
   title = BuildInfo.name + " " + BuildInfo.version
   contents = new swing.BorderPanel {
@@ -58,9 +67,7 @@ class ScalmonFrame(val model: Model, val controller: Controller) extends swing.F
 
   def drawAnimal(a: Animal) = new swing.BoxPanel(swing.Orientation.Vertical) {
     contents += new swing.Label(a.name)
-    contents += new swing.Label {
-      icon = new javax.swing.ImageIcon(a.image, a.name)
-    }
+    contents += new ImageLabel(a.image)
     contents += new swing.Label(
       s"Life: ${a.healthPoints}/${a.initHealthPoints}")
     contents += new swing.Label(
