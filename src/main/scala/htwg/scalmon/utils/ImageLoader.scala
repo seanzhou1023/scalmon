@@ -77,7 +77,7 @@ object ImageLoader {
         addCache(query, ImageIO.read(f), false)
         return true
       } catch {
-        case e: Exception => println("searchForFile: " + e)
+        case e: Exception => Log(e)
       }
     }
 
@@ -111,7 +111,7 @@ object ImageLoader {
         yield new URL(results.elements(i).unescapedUrl)
     } catch {
       case e: Exception =>
-        println("getImageUrls: " + e)
+        Log(e)
         Seq[URL]()
     }
   }
@@ -121,7 +121,7 @@ object ImageLoader {
       ImageIO.read(url)
     } catch {
       case e: Exception =>
-        println("tryReadImage: " + e)
+        Log(e)
         null
     }
   }
@@ -144,7 +144,7 @@ object ImageLoader {
       try {
         ImageIO.write(img, "png", file(query))
       } catch {
-        case e: Exception => println("addCache: " + e)
+        case e: Exception => Log(e)
       }
     }
   }

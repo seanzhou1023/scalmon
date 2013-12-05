@@ -34,7 +34,7 @@ class ControllerSpec extends FlatSpec with Matchers with GivenWhenThen {
       m.playerB = playerB;
     }
 
-    new Controller(m)
+    new Controller(m, false)
   }
 
   def testOtherStates(cmd: Command, filterList: List[String]) {
@@ -46,7 +46,7 @@ class ControllerSpec extends FlatSpec with Matchers with GivenWhenThen {
     for (state <- otherStates) {
       val c = controller(state)
       val oldState = c.model.state
-      c.handle(cmd)
+      an[IllegalArgumentException] should be thrownBy c.handle(cmd)
       c.model.state should be(oldState)
     }
   }

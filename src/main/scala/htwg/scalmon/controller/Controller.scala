@@ -1,25 +1,31 @@
 package htwg.scalmon.controller
 
 import htwg.scalmon.model._
+import htwg.scalmon.utils.Log
 import scala.util.Random
 
-class Controller(val model: Model) {
+class Controller(val model: Model, val logExceptions: Boolean = true) {
 
   def handle(command: Command) {
-    command match {
-      case x: SetPlayer => cmdSetPlayer(x)
-      case x: Ability   => cmdAbility(x)
-      case RunStep      => cmdRunStep
-      case Restart      => cmdRestart
-      case Quit         => model.state = Exited
-      case other        => throw new IllegalArgumentException("unknown command: " + other)
+    try {
+      command match {
+        case x: SetPlayer => cmdSetPlayer(x)
+        case x: Ability   => cmdAbility(x)
+        case RunStep      => cmdRunStep
+        case Restart      => cmdRestart
+        case Quit         => model.state = Exited
+        case other        => throw new IllegalArgumentException("unknown command: " + other)
+      }
+    } catch {
+      case e: Exception => if (logExceptions) Log(e) else throw e
     }
 
     model.notifyListeners()
   }
 
   private def cmdSetPlayer(cmd: SetPlayer) {
-    if (cmd.animalNames.size != model.gameSize) return
+    if (cmd.animalNames.size != model.gameSize)
+      throw new IllegalArgumentException("Number of animal names (" + cmd.animalNames.size + ") has to match the game size (" + model.gameSize + ")")
 
     val animals = cmd.animalNames.map(name => new Animal(name))
     val player = new Player(cmd.playerName, animals.toArray)
@@ -31,7 +37,7 @@ class Controller(val model: Model) {
       case Init(true) =>
         model.playerB = player
         startFight
-      case _ => println("SetPlayer not allowed in state " + model.state)
+      case _ => throw new IllegalArgumentException("SetPlayer not allowed in state " + model.state)
     }
   }
 
@@ -62,7 +68,7 @@ class Controller(val model: Model) {
             case list => Round(number, list.head, newAttacks)
           }
 
-      case _ => println("Attack not allowed in state " + model.state)
+      case _ => throw new IllegalArgumentException("Attack not allowed in state " + model.state)
     }
   }
 
@@ -85,14 +91,14 @@ class Controller(val model: Model) {
             }
         }
 
-      case _ => println("RunStep not allowed in state " + model.state)
+      case _ => throw new IllegalArgumentException("RunStep not allowed in state " + model.state)
     }
   }
 
   private def cmdRestart {
     model.state match {
       case GameOver(_) => startFight
-      case _           => println("Restart not allowed in state " + model.state)
+      case _           => throw new IllegalArgumentException("Restart not allowed in state " + model.state)
     }
   }
 
