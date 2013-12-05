@@ -37,7 +37,7 @@ class Controller(val model: Model) {
 
   private def startFight {
     model.resetAnimals
-    model.state = startRound(0)
+    model.state = startRound(1)
   }
 
   private def startRound(number: Int) = {
