@@ -82,8 +82,8 @@ class ScalmonFrame(val model: Model, val controller: Controller) extends swing.F
     contents += new swing.Button(
       s"<html>HEAL: ${a.variationBetween(a.baseAttackValue)}<br /></html>")
     contents += new swing.Button(
-      s"<html>DMG: ${a.variationBetween(a.baseAttackValue * 2)}<br />" +
-      s"SELF DMG: ${a.variationBetween(a.baseAttackValue / 2)}</html>")
+      s"<html><center>DMG: ${a.variationBetween(a.baseAttackValue * 2)}<br />" +
+      s"SELF DMG: ${a.variationBetween(a.baseAttackValue / 2)}</center></html>")
   }
 
   def roundAt(p: Int)(n: Double): Double = {

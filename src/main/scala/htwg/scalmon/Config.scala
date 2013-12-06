@@ -7,7 +7,7 @@ object UserInterface extends Enumeration {
 
 import UserInterface._
 
-case class Config(userInterface: UserInterface = Textual, size: Int = 1)
+case class Config(userInterface: UserInterface = Textual, size: Int = 1, defaultInit: Boolean = false)
 
 class Parser extends scopt.OptionParser[Config]("scalmon") {
   val listT = List("t", "textual")
@@ -35,6 +35,10 @@ class Parser extends scopt.OptionParser[Config]("scalmon") {
     }
     .text("Specify the user interface with [" + listValid.mkString("|") + "].")
     .validate { x => if (listValid.contains(x)) success else failure("Invalid value '" + x + "' for option --ui") }
+
+  opt[Unit]('d', "defaultInit")
+    .action { (_, c) => c.copy(defaultInit = true) }
+    .text("Enables a default deck of animals.")
 
   help("help") text "Prints usage text."
 

@@ -31,8 +31,11 @@ object Main extends App {
 
     views.foreach(_.show)
 
-    // test - replace by dialog to add users
-    controller.handle(SetPlayer("A", List("Pikachu", "Fette Katze")))
-    controller.handle(SetPlayer("B", List("Mauzi", "Arbok")))
+    if (config.defaultInit) {
+      val animalsA = for (i <- 1 to config.size) yield "A" + i
+      val animalsB = for (i <- 1 to config.size) yield "B" + i
+      controller.handle(SetPlayer("Player A", animalsA.toList))
+      controller.handle(SetPlayer("Player B", animalsB.toList))
+    }
   }
 }
