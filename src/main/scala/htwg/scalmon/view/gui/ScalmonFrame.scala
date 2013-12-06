@@ -6,10 +6,15 @@ import htwg.scalmon.model._
 
 class ScalmonFrame(val model: Model, val controller: Controller) extends swing.Frame {
   title = BuildInfo.name + " " + BuildInfo.version
+
+  val battleField = new swing.Label("Battlefield")
+  val playerA = new PlayerPanel(model.playerA)
+  val playerB = new PlayerPanel(model.playerB)
+
   contents = new swing.BorderPanel {
-    add(new swing.Label("Battlefield"), swing.BorderPanel.Position.Center)
-    add(drawPlayers(model.playerA), swing.BorderPanel.Position.North)
-    add(drawPlayers(model.playerB), swing.BorderPanel.Position.South)
+    add(battleField, swing.BorderPanel.Position.Center)
+    add(playerA, swing.BorderPanel.Position.North)
+    add(playerB, swing.BorderPanel.Position.South)
   }
 
   override def closeOperation {
@@ -19,38 +24,11 @@ class ScalmonFrame(val model: Model, val controller: Controller) extends swing.F
 
   def update(info: Option[AbilityInfo]) = {
     visible = true
-    // TODO GUI: actualize text of views
-  }
 
-  def drawPlayers(player: Player) = new swing.FlowPanel {
-    if (player != null)
-      for (animal <- player.animals)
-        contents += drawAnimal(animal)
-  }
+    //battleField.update(info) // TODO GUI: battleField
 
-  def drawAnimal(a: Animal) = new swing.BoxPanel(swing.Orientation.Vertical) {
-    contents += new swing.Label(a.name)
-    contents += new ImageLabel(a.image)
-    contents += new swing.Label(
-      s"Life: ${a.healthPoints}/${a.initHealthPoints}")
-    contents += new swing.Label(
-      s"Speed: ${a.initSpeed}")
-    contents += new swing.Label(
-      s"Block: ${a.baseBlockValue}")
-    contents += new swing.Label(
-      s"Crit: ${roundAt(2)(a.criticalChance * 100)}%")
-    contents += new swing.Separator
-    contents += new swing.Button(
-      s"<html>DMG: ${a.variationBetween(a.baseAttackValue)}<br /></html>")
-    contents += new swing.Button(
-      s"<html>HEAL: ${a.variationBetween(a.baseAttackValue)}<br /></html>")
-    contents += new swing.Button(
-      s"<html><center>DMG: ${a.variationBetween(a.baseAttackValue * 2)}<br />" +
-      s"SELF DMG: ${a.variationBetween(a.baseAttackValue / 2)}</center></html>")
-  }
-
-  def roundAt(p: Int)(n: Double): Double = {
-    val s = math pow (10, p)
-    (math round n * s) / s
+    val activeAnimal = if (model.state.isInstanceOf[Round]) model.state.asInstanceOf[Round].chooseAttackFor else null
+    playerA.update(activeAnimal)
+    playerB.update(activeAnimal)
   }
 }
