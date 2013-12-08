@@ -31,3 +31,8 @@ class PlayerPanel(player: Player) extends swing.FlowPanel {
 
   def update(active: Animal) = animalPanels.foreach(_.update(active))
 }
+
+class VSpace(height: Int = 10) extends swing.Component {
+  minimumSize = new swing.Dimension(0, height)
+  preferredSize = minimumSize
+}

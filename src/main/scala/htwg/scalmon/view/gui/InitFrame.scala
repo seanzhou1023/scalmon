@@ -7,14 +7,20 @@ import htwg.scalmon.model._
 class InitFrame(val model: Model, val controller: Controller) extends swing.Frame {
   title = BuildInfo.name + " " + BuildInfo.version
   val textFields = for (i <- 0 to model.gameSize) yield new swing.TextField // first is for player name
-  val l1 = new Label("<html><br />Please enter %0</html>", "your name")
-  val l2 = new Label("<html><br />and the names of %0 animals</html>", "your")
+  val l1 = new Label("<html><center>Please enter %0</center></html>", "your name")
+  val l2 = new Label("<html>and the names of %0 animals</html>", "your")
 
-  contents = new swing.BoxPanel(swing.Orientation.Vertical) {
-    contents += new swing.Label("<html>Welcome to " + BuildInfo.name.toUpperCase() + "!</html>")
-    contents ++= l1 +: textFields.head +: l2 +: textFields.tail
+  contents = new swing.BorderPanel {
+    add(new swing.Label("<html>Welcome to " + BuildInfo.name.toUpperCase() + "!</html>"),
+      swing.BorderPanel.Position.North)
 
-    contents += new swing.Button(swing.Action("Ok") {
+    add(new swing.BoxPanel(swing.Orientation.Vertical) {
+      contents += new VSpace
+      contents ++= l1 +: textFields.head +: new VSpace +: l2 +: textFields.tail
+      contents += new VSpace
+    }, swing.BorderPanel.Position.Center)
+
+    add(new swing.Button(swing.Action("Ok") {
       if (textFields.forall(_.text.length > 0)) {
         controller.handle(SetPlayer(textFields.head.text, textFields.tail.map(_.text).toList))
 
@@ -25,10 +31,10 @@ class InitFrame(val model: Model, val controller: Controller) extends swing.Fram
           textFields.head.requestFocus
         }
       }
-    })
+    }), swing.BorderPanel.Position.South)
   }
 
-  size = new swing.Dimension(math.max(size.width, 300), size.height + 40)
+  minimumSize = new swing.Dimension(math.max(size.width, 300), size.height + 20)
   centerOnScreen
 
   override def closeOperation {
