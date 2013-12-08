@@ -1,5 +1,6 @@
 package htwg.scalmon.view.gui
 
+import htwg.scalmon.view.Helper._
 import htwg.scalmon.model.Animal
 import java.awt.Color
 
@@ -24,11 +25,6 @@ class AnimalPanel(val a: Animal) extends swing.BoxPanel(swing.Orientation.Vertic
   contents += new Label("<html>%0</html>", a.name)
   contents ++= imageLabel :: valueLabel :: new swing.Separator :: buttons
 
-  def roundAt(p: Int)(n: Double): Double = {
-    val s = math pow (10, p)
-    (math round n * s) / s
-  }
-
   def update(activeAnimal: Animal) {
     imageLabel.enabled = a.alive
 
@@ -36,7 +32,7 @@ class AnimalPanel(val a: Animal) extends swing.BoxPanel(swing.Orientation.Vertic
       a.healthPoints,
       a.initHealthPoints,
       a.initSpeed,
-      a.baseAttackValue,
+      a.baseBlockValue,
       roundAt(2)(a.criticalChance * 100))
 
     val textColor = if (a.alive) Color.black else Color.gray
