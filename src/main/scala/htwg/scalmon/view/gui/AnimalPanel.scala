@@ -3,7 +3,9 @@ package htwg.scalmon.view.gui
 import htwg.scalmon.model.Animal
 import java.awt.Color
 
-class AnimalPanel(val a: Animal) extends swing.BoxPanel(swing.Orientation.Vertical) {
+class AnimalPanel(val a: Animal)
+  extends swing.BoxPanel(swing.Orientation.Vertical) {
+
   val imageLabel = new ImageLabel(a.image)
   val valueLabel = new Label(
     <html>
@@ -15,14 +17,33 @@ class AnimalPanel(val a: Animal) extends swing.BoxPanel(swing.Orientation.Vertic
       </table>
     </html>.toString)
 
+  val b1_text =
+    <html>
+      DMG:{ a.variationBetween(a.baseAttackValue) }<br/>
+    </html>.toString
+
+  val b2_text =
+    <html>
+      HEAL:{ a.variationBetween(a.baseAttackValue) }<br/>
+    </html>.toString
+
+  val b3_text =
+    <html>
+      <center>
+        DMG:{ a.variationBetween(a.baseAttackValue * 2) }<br/>
+        SELF DMG:{ a.variationBetween(a.baseAttackValue / 2) }
+      </center>
+    </html>.toString
+
   val buttons = List(
-    s"<html>DMG: ${a.variationBetween(a.baseAttackValue)}<br /></html>",
-    s"<html>HEAL: ${a.variationBetween(a.baseAttackValue)}<br /></html>",
-    s"<html><center>DMG: ${a.variationBetween(a.baseAttackValue * 2)}<br />" +
-    s"SELF DMG: ${a.variationBetween(a.baseAttackValue / 2)}</center></html>").map(new swing.Button(_))
+    new AbilityButton(b1_text) { ability = 1 },
+    new AbilityButton(b2_text) { ability = 2 },
+    new AbilityButton(b3_text) { ability = 3 })
 
   contents += new Label("<html>%0</html>", a.name)
   contents ++= imageLabel :: valueLabel :: new swing.Separator :: buttons
+
+  for (button <- buttons) this.listenTo(button)
 
   def roundAt(p: Int)(n: Double): Double = {
     val s = math pow (10, p)

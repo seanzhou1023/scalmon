@@ -36,3 +36,9 @@ class VSpace(height: Int = 10) extends swing.Component {
   minimumSize = new swing.Dimension(0, height)
   preferredSize = minimumSize
 }
+
+class AbilityButton(text: String) extends swing.Button(text: String) {
+  var abilityNr = 0
+  def ability: Int = abilityNr
+  def ability_=(nr: Int) = abilityNr = nr
+}
