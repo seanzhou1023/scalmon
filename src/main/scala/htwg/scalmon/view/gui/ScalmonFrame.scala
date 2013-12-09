@@ -11,7 +11,7 @@ class ScalmonFrame(val model: Model, val controller: Controller) extends swing.F
   val battleField = new Battlefield
   val playerA = new PlayerPanel(model.playerA)
   val playerB = new PlayerPanel(model.playerB)
-  val timer = Timer(3000) { controller.handle(RunStep) }
+  val timer = Timer(1500) { controller.handle(RunStep) }
 
   contents = new swing.BorderPanel {
     add(battleField, swing.BorderPanel.Position.Center)
@@ -21,28 +21,31 @@ class ScalmonFrame(val model: Model, val controller: Controller) extends swing.F
 
   var choosedAbility: Int = 0
 
-  for (animalPanel <- playerA.animalPanels) {
-    animalPanel.reactions += {
-      case swing.event.ButtonClicked(b: AbilityButton) => {
-        choosedAbility = b.ability
-        Log(s"GUI: Click AbilityButton: ${b.ability}.")
+  def setupAbilityButtonReactions(playerPanel: PlayerPanel) =
+    for (animalPanel <- playerPanel.animalPanels) {
+      animalPanel.reactions += {
+        case swing.event.ButtonClicked(b: AbilityButton) => {
+          choosedAbility = b.ability
+        }
       }
     }
-  }
 
-  for (animalPanel <- playerB.animalPanels) {
-    animalPanel.reactions += {
-      case swing.event.MouseClicked(component: ImageLabel, _, _, _, _) => {
-        if (choosedAbility != 0) {
-          //Log(s"GUI: MouseClicked ImageLabel: ${component.instance} with Ability ${choosedAbility}.")
-          controller.handle(Ability(choosedAbility, component.instance))
-          choosedAbility = 0
-        } /*else {
-          Log("GUI: MouseClicked: but no choosedAbility.")
-        } */
+  setupAbilityButtonReactions(playerA)
+
+  def setupImageLabelReactions(playerPanel: PlayerPanel) =
+    for (animalPanel <- playerPanel.animalPanels) {
+      animalPanel.reactions += {
+        case swing.event.MouseClicked(component: ImageLabel, _, _, _, _) => {
+          if (choosedAbility != 0) {
+            controller.handle(Ability(choosedAbility, component.instance))
+            choosedAbility = 0
+          }
+        }
       }
     }
-  }
+
+  setupImageLabelReactions(playerA)
+  setupImageLabelReactions(playerB)
 
   override def closeOperation {
     controller.handle(Quit)

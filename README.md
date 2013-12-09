@@ -28,13 +28,26 @@ the plugin from the Scala IDE bundle:
 
 ### Textual Interface
 
-sbt "run --ui t"
+sbt "run --ui t -s 3"
 
 ### Graphical Interface
 
 Based on scala.swing.
 
-sbt "run --ui g"
+sbt "run --ui g -s 3"
+
+## Assemble fat JAR
+
+With the sbt plugin https://github.com/sbt/sbt-assembly it is possible to
+bundle a stand alone jar file with all needed dependencies included. Just type:
+
+sbt assembly
+
+Now in `target/scala-2.10` a `scalmon-assembly-0.2.0.jar` (or newer) appears.
+This jar file can be run on every computer with java installed,
+for a game with three animals and GUI, just type:
+
+java -jar scalmon-assembly-0.2.0.jar -u g -s 3
 
 ## Roadmap
 

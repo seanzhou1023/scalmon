@@ -35,3 +35,5 @@ buildInfoPackage := "htwg.scalmon"
 
 // BuildInfo auch in Eclipse als Source verwenden
 EclipseKeys.createSrc := EclipseCreateSrc.Default + EclipseCreateSrc.Managed
+
+assemblySettings
