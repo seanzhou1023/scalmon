@@ -15,7 +15,7 @@ class AnimalPanel(val a: Animal)
         <tr><td>Speed:</td><td>%2</td></tr>
         <tr><td>Block:</td><td>%3</td></tr>
         <tr><td>Crit: </td><td>%4%</td></tr>
-		<tr><td>Type: </td><td>%5</td></tr>
+        <tr><td>Type: </td><td>%5</td></tr>
       </table>
     </html>.toString)
 
@@ -38,21 +38,16 @@ class AnimalPanel(val a: Animal)
     </html>.toString
 
   val buttons = List(
-    new AbilityButton(b1_text) { ability = 1 },
-    new AbilityButton(b2_text) { ability = 2 },
-    new AbilityButton(b3_text) { ability = 3 })
+    new AbilityButton(b1_text, 1),
+    new AbilityButton(b2_text, 2),
+    new AbilityButton(b3_text, 3))
 
   contents += new Label("<html>%0</html>", a.name)
   contents ++= imageLabel :: valueLabel :: new swing.Separator :: buttons
 
   for (button <- buttons) this.listenTo(button)
-  
-  this.listenTo(imageLabel.mouse.clicks)
 
-  def roundAt(p: Int)(n: Double): Double = {
-    val s = math pow (10, p)
-    (math round n * s) / s
-  }
+  this.listenTo(imageLabel.mouse.clicks)
 
   def update(activeAnimal: Animal) {
     imageLabel.enabled = a.alive
