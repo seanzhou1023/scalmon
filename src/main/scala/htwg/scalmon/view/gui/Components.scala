@@ -38,3 +38,26 @@ class VSpace(height: Int = 10) extends swing.Component {
 }
 
 class AbilityButton(text: String, val ability: Int) extends swing.Button(text: String)
+
+class Timer(interval: Int, repeats: Boolean, op: => Unit)
+  extends javax.swing.Timer(interval,
+    new javax.swing.AbstractAction() {
+      def actionPerformed(e: java.awt.event.ActionEvent) = op
+    }) {
+  setRepeats(repeats)
+
+  def active = isRunning
+
+  def active_=(run: Boolean): Boolean = {
+    (isRunning(), run) match {
+      case (false, true) => start()
+      case (true, false) => stop()
+      case _             =>
+    }
+    isRunning()
+  }
+}
+
+object Timer {
+  def apply(interval: Int, repeats: Boolean = true)(op: => Unit) = new Timer(interval, repeats, op)
+}
