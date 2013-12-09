@@ -7,7 +7,7 @@ import java.awt.Color
 class AnimalPanel(val a: Animal)
   extends swing.BoxPanel(swing.Orientation.Vertical) {
 
-  val imageLabel = new ImageLabel(a.image)
+  val imageLabel = new ImageLabel(a.image, a)
   val valueLabel = new Label(
     <html>
       <table>
@@ -15,6 +15,7 @@ class AnimalPanel(val a: Animal)
         <tr><td>Speed:</td><td>%2</td></tr>
         <tr><td>Block:</td><td>%3</td></tr>
         <tr><td>Crit: </td><td>%4%</td></tr>
+		<tr><td>Crit: </td><td>%5</td></tr>
       </table>
     </html>.toString)
 
@@ -45,6 +46,8 @@ class AnimalPanel(val a: Animal)
   contents ++= imageLabel :: valueLabel :: new swing.Separator :: buttons
 
   for (button <- buttons) this.listenTo(button)
+  
+  this.listenTo(imageLabel.mouse.clicks)
 
   def roundAt(p: Int)(n: Double): Double = {
     val s = math pow (10, p)
@@ -59,7 +62,8 @@ class AnimalPanel(val a: Animal)
       a.initHealthPoints,
       a.initSpeed,
       a.baseBlockValue,
-      roundAt(2)(a.criticalChance * 100))
+      roundAt(2)(a.criticalChance * 100),
+      a.animalType)
 
     val textColor = if (a.alive) Color.black else Color.gray
     val buttonsActive = activeAnimal == a

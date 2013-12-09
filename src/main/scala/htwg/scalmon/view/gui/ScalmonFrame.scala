@@ -28,6 +28,13 @@ class ScalmonFrame(val model: Model, val controller: Controller) extends swing.F
     }
   }
 
+  for (animalPanel <- playerB.animalPanels) {
+    animalPanel.reactions += {
+      case swing.event.MouseClicked(component: ImageLabel, _, _, _, _) =>
+        println(s"click BB: ${component.instance}")
+    }
+  }
+  
   override def closeOperation {
     controller.handle(Quit)
     super.closeOperation

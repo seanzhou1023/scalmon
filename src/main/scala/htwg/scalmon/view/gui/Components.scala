@@ -16,7 +16,7 @@ class Label(val format: String, args: Any*) extends swing.Label {
   setArgs(args: _*)
 }
 
-class ImageLabel(val imageWrapper: ImageWrapper) extends swing.Label {
+class ImageLabel(val imageWrapper: ImageWrapper, val instance: Animal) extends swing.Label {
   icon = new javax.swing.ImageIcon(imageWrapper.get(this))
 
   override def repaint {
