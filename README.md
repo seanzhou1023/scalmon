@@ -44,11 +44,11 @@ Version 0.1:
 
 Version 0.2:
 
-    Basic Textual Interface is working.
+    Basic GUI Interface is working.
 
 Version 0.3:
 
-    Basic GUI Interface is working.
+    Basic Textual Interface is working.
 
 Version 0.4:
 

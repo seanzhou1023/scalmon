@@ -1,6 +1,7 @@
 package htwg.scalmon.view.gui
 
 import htwg.scalmon.BuildInfo
+import htwg.scalmon.utils.Log
 import htwg.scalmon.controller._
 import htwg.scalmon.model._
 
@@ -17,21 +18,31 @@ class ScalmonFrame(val model: Model, val controller: Controller) extends swing.F
     add(playerB, swing.BorderPanel.Position.South)
   }
   
+  var choosedAbility: Int = 0
+  
   for (animalPanel <- playerA.animalPanels) {
     animalPanel.reactions += {
       case swing.event.ButtonClicked(b: AbilityButton) => {
-        val bob = new Animal("Bob") // TODO: ersetzen mit gewaehltem Gegner.
-        controller.handle(Ability(b.ability, bob))
-        controller.handle(RunStep)
-        println(s"click: ${b.ability}")
+        choosedAbility = b.ability
+        Log(s"GUI: Click AbilityButton: ${b.ability}.")
       }
     }
   }
 
   for (animalPanel <- playerB.animalPanels) {
     animalPanel.reactions += {
-      case swing.event.MouseClicked(component: ImageLabel, _, _, _, _) =>
-        println(s"click BB: ${component.instance}")
+      case swing.event.MouseClicked(component: ImageLabel, _, _, _, _) => {
+        if (choosedAbility != 0) {
+          Log(s"GUI: MouseClicked ImageLabel: ${component.instance} with Ability ${choosedAbility}.")
+          controller.handle(Ability(choosedAbility, component.instance))
+          while (model.state.isInstanceOf[RunRound]) {
+            controller.handle(RunStep)
+          }
+          choosedAbility = 0
+        } else {
+          Log("GUI: MouseClicked: but no choosedAbility.")
+        }
+      }
     }
   }
   

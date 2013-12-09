@@ -15,7 +15,7 @@ class AnimalPanel(val a: Animal)
         <tr><td>Speed:</td><td>%2</td></tr>
         <tr><td>Block:</td><td>%3</td></tr>
         <tr><td>Crit: </td><td>%4%</td></tr>
-		<tr><td>Crit: </td><td>%5</td></tr>
+		<tr><td>Type: </td><td>%5</td></tr>
       </table>
     </html>.toString)
 

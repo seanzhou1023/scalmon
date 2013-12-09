@@ -4,7 +4,7 @@ import java.io._
 import java.util.Date
 
 object Log {
-  val writer = new PrintWriter(new FileWriter("./log.txt", true), true);
+  val writer = new PrintWriter(new FileWriter("./scalmon.log", true), true);
 
   def apply(ex: Exception) {
     try {
