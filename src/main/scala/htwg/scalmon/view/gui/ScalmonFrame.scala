@@ -49,6 +49,7 @@ class ScalmonFrame(val model: Model, val controller: Controller) extends swing.F
 
   override def closeOperation {
     controller.handle(Quit)
+    timer.stop
     super.closeOperation
   }
 

@@ -8,13 +8,15 @@ class Controller(val model: Model, val logExceptions: Boolean = true) {
 
   def handle(command: Command) {
     try {
-      command match {
-        case x: SetPlayer => cmdSetPlayer(x)
-        case x: Ability   => cmdAbility(x)
-        case RunStep      => cmdRunStep
-        case Restart      => cmdRestart
-        case Quit         => model.state = Exited
-        case other        => throw new IllegalArgumentException("unknown command: " + other)
+      model.synchronized {
+        command match {
+          case x: SetPlayer => cmdSetPlayer(x)
+          case x: Ability   => cmdAbility(x)
+          case RunStep      => cmdRunStep
+          case Restart      => cmdRestart
+          case Quit         => model.state = Exited
+          case other        => throw new IllegalArgumentException("unknown command: " + other)
+        }
       }
     } catch {
       case e: Exception => if (logExceptions) Log(e) else throw e
