@@ -136,7 +136,9 @@ class Animal(val name: String, val predictable: Boolean = false) {
     case x => throw new Exception("ability " + x + " not available")
   }
 
-  var healthPoints = initHealthPoints
+  private var pHealthPoints = initHealthPoints
+  def healthPoints = pHealthPoints
+  def healthPoints_=(points: Int): Unit = pHealthPoints = max(min(points, initHealthPoints), 0)
 
   def alive = healthPoints > 0
 
