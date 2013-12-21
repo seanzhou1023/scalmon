@@ -1,3 +1,5 @@
+import play.Project._
+
 name := "scalmon"
 
 version := "0.3.0"
@@ -37,3 +39,10 @@ buildInfoPackage := "htwg.scalmon"
 EclipseKeys.createSrc := EclipseCreateSrc.Default + EclipseCreateSrc.Managed
 
 assemblySettings
+
+// Play Framework
+playScalaSettings
+
+unmanagedSourceDirectories in Compile += baseDirectory.value / "src/main"
+
+unmanagedSourceDirectories in Test += baseDirectory.value / "src/test"

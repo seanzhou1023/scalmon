@@ -24,17 +24,45 @@ To run the test specifications in eclipse you can install
 the plugin from the Scala IDE bundle:
 [http://www.scalatest.org/user_guide/using_scalatest_with_eclipse]
 
+## Project Anatomy
+
+Main sources:
+
+    src/main/
+
+Test sources:
+
+    src/test/
+
+Play sources (Webinterface):
+
+    app/
+    conf/
+    public/
+    logs/
+
 ## Run specific GUI
 
 ### Textual Interface
 
     sbt "run --ui t -s 3"
 
+If `play` framework is in sbt enabled you must run explicilty the Main,
+otherwise the `sbt run` command launches the `play` server:
+
+    sbt "run-main htwg.scalmon.Main --ui t -s 3"
+
 ### Graphical Interface
 
 Based on scala.swing.
 
     sbt "run --ui g -s 3"
+
+If `play` framework is in sbt enabled you must run explicilty the Main,
+otherwise the `sbt run` command launches the `play` server:
+
+    sbt "run-main htwg.scalmon.Main --ui g -s 3"
+
 
 ## Assemble fat JAR
 
