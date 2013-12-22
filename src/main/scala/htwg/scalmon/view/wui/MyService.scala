@@ -16,7 +16,17 @@ class MyServiceActor extends Actor with MyService {
   // this actor only runs our route, but you could add
   // other things here, like request stream processing
   // or timeout handling
-  def receive = runRoute(myRoute)
+  def receive = {
+    runRoute(myRoute)
+  }
+}
+
+object Single {
+  var count = 1
+  def animal(x: String): String = {
+    count += 1
+    return x + " " + count
+  }
 }
 
 
@@ -31,6 +41,20 @@ trait MyService extends HttpService {
             <html>
               <body>
                 <h1>Say hello to <i>scalmon web</i>!</h1>
+              </body>
+            </html>
+          }
+        }
+      }
+    } ~
+    path("animal") {
+      get {
+        respondWithMediaType(`text/html`) {
+          complete {
+            <html>
+              <body>
+                <h1>Say hello to <i>scalmon web</i>!</h1>
+                <p>{Single.animal("X")} welcomes you.</p>
               </body>
             </html>
           }
