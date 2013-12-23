@@ -11,7 +11,7 @@ object Main extends App {
       case Textual   => new TUI(model, controller) :: Nil
       case Graphical => new GUI(model, controller) :: Nil
       case Web       => new WUI(model, controller) :: Nil
-      case All       => List(new TUI(model, controller), new GUI(model, controller))
+      case All       => List(new TUI(model, controller), new GUI(model, controller), new WUI(model, controller))
     }
   }
 
