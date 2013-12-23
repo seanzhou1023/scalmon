@@ -2,7 +2,7 @@ package htwg.scalmon.view
 
 import htwg.scalmon.model._
 import htwg.scalmon.controller._
-import htwg.scalmon.view.wui.MyServiceActor
+import htwg.scalmon.view.wui.ServiceActor
 import htwg.scalmon.view.wui.ModelHack
 
 import akka.actor.{ActorSystem, Props}
@@ -14,10 +14,11 @@ import scala.concurrent.duration._
 
 class WUI(_model: Model, _controller: Controller) extends View(_model, _controller) {
   implicit val system = ActorSystem("on-spray-can")
-  val service = system.actorOf(Props[MyServiceActor], "demo-service")
+  val service = system.actorOf(Props[ServiceActor], "demo-service")
   implicit val timeout = Timeout(5.seconds)
 
   ModelHack.model = model
+  ModelHack.controller = controller
 
   def update(info: Option[AbilityInfo]) = {
     model.state match {
