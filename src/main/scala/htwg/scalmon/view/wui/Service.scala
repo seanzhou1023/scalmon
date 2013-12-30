@@ -36,7 +36,9 @@ trait ScalmonService extends HttpService {
                   {battlefield}
                   {drawAnimals(ModelHack.model.playerB, "B")}
                   <br /><br />
-                  <input type="submit" align="center" value="Attack!"></input>
+                  <center>
+                  <input type="submit" value="Attack!"></input>
+                  </center>
                 </form>
               </body>
             </html>
@@ -58,6 +60,9 @@ trait ScalmonService extends HttpService {
           val command = Ability(ability.toInt, targetAnimal)
           println(command)
           ModelHack.controller.handle(command)
+          while (ModelHack.model.state.isInstanceOf[RunRound]) {
+            ModelHack.controller.handle(RunStep)
+          }
           redirect("/", StatusCodes.Found)
         }
       }
