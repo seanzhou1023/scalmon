@@ -17,6 +17,7 @@ class ServiceActor extends Actor with ScalmonService {
 object ModelHack {  // TODO: make schoener
   var model: Model = null
   var controller: Controller = null
+  def activeAnimal = if (model.state.isInstanceOf[Round]) model.state.asInstanceOf[Round].chooseAttackFor else null
 }
 
 trait ScalmonService extends HttpService {
@@ -79,16 +80,43 @@ trait ScalmonService extends HttpService {
       <tr><td>Crit: </td><td>{roundAt(2)(a.criticalChance * 100)}%</td></tr>
       <tr><td>Type: </td><td>{a.animalType}</td></tr>
     </table>
-      <input type="radio" name="ability" value="1">
-      DMG:{ a.variationBetween(a.baseAttackValue) }
-      </input><br/>
-      <input type="radio" name="ability" value="2">
-      HEAL:{ a.variationBetween(a.baseAttackValue) }
-      </input><br/>
-      <input type="radio" name="ability" value="3">
-      DMG:{ a.variationBetween(a.baseAttackValue * 2) }<br/>
-      SELF DMG:{ a.variationBetween(a.baseAttackValue / 2) }
-      </input>
+      {
+        if (ModelHack.activeAnimal == a) {
+          <input type="radio" name="ability" value="1">
+        	DMG:{ a.variationBetween(a.baseAttackValue) }
+          </input>
+        } else {
+          <input type="radio" disabled="disabled" name="ability" value="1">
+        	DMG:{ a.variationBetween(a.baseAttackValue) }
+          </input>
+        }
+      }
+      <br/>
+      {
+        if (ModelHack.activeAnimal == a) {
+          <input type="radio" name="ability" value="2">
+        	HEAL:{ a.variationBetween(a.baseAttackValue) }
+          </input>
+        } else {
+          <input type="radio" disabled="disabled" name="ability" value="2">
+        	HEAL:{ a.variationBetween(a.baseAttackValue) }
+          </input>
+        }
+      }
+      <br/>
+      {
+        if (ModelHack.activeAnimal == a) {
+          <input type="radio" name="ability" value="3">
+        	DMG:{ a.variationBetween(a.baseAttackValue * 2) }<br/>
+        	SELF DMG:{ a.variationBetween(a.baseAttackValue / 2) }
+          </input>
+        } else {
+          <input type="radio" disabled="disabled" name="ability" value="3">
+        	DMG:{ a.variationBetween(a.baseAttackValue * 2) }<br/>
+        	SELF DMG:{ a.variationBetween(a.baseAttackValue / 2) }
+          </input>
+        }
+      }
     </div>
 
   def battlefield =
