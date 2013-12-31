@@ -12,9 +12,12 @@ import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
 import htwg.scalmon.BuildInfo
 import scala.swing.UIElement
+import org.apache.commons.codec.binary.Base64
+import java.io.ByteArrayOutputStream
+import javax.imageio.ImageIO
 
 class ImageWrapper {
-  private var image: Image = ImageLoader.emptyImage
+  private var image: BufferedImage = ImageLoader.emptyImage
   private var listeners = List[UIElement]()
 
   def get(elem: UIElement = null) = {
@@ -23,8 +26,14 @@ class ImageWrapper {
 
     image
   }
+  
+  def asBase64 = {
+    val bos = new ByteArrayOutputStream()
+    ImageIO.write(image, "png", bos)
+    Base64.encodeBase64String(bos.toByteArray)
+  }
 
-  def set(img: Image) {
+  def set(img: BufferedImage) {
     image = img
     listeners.foreach(_.repaint)
   }

@@ -76,7 +76,7 @@ trait ScalmonService extends HttpService {
   def animalTemplate(a: Animal, idx: String) =
     <div class="block">
     {a.name}
-    PICTURE
+    <img src={"data:image/png;base64," + a.image.asBase64} />
     <input type="radio" name="animal" value={idx}>{a.name}</input>
     <table>
       <tr><td>Life: </td><td>{a.healthPoints} / {a.initHealthPoints}</td></tr>
@@ -134,7 +134,7 @@ trait ScalmonService extends HttpService {
         text-align: center;
       }}
       .block {{
-        width: 150px;
+        width: 250px;
         display: inline-block;
         zoom: 1;
       }}

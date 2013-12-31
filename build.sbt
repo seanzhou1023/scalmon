@@ -17,14 +17,15 @@ libraryDependencies ++= {
   val akkaV = "2.2.3"
   val sprayV = "1.2.0"
   Seq(
-    "org.scala-lang" % "scala-swing" % "2.10.3",
-    "com.github.scopt" %% "scopt" % "3.1.0",
-    "org.scalatest" % "scalatest_2.10" % "2.0.RC3" % "test",
-    "io.spray"            %   "spray-can"     % sprayV,
-    "io.spray"            %   "spray-routing" % sprayV,
-    "io.spray"            %   "spray-testkit" % sprayV,
-    "com.typesafe.akka"   %%  "akka-actor"    % akkaV,
-    "com.typesafe.akka"   %%  "akka-testkit"  % akkaV
+    "org.scala-lang"      %   "scala-swing"    % "2.10.3",
+    "com.github.scopt"    %%  "scopt"          % "3.1.0",
+    "org.scalatest"       %   "scalatest_2.10" % "2.0.RC3" % "test",
+    "commons-codec"       %   "commons-codec"  % "1.8",
+    "io.spray"            %   "spray-can"      % sprayV,
+    "io.spray"            %   "spray-routing"  % sprayV,
+    "io.spray"            %   "spray-testkit"  % sprayV,
+    "com.typesafe.akka"   %%  "akka-actor"     % akkaV,
+    "com.typesafe.akka"   %%  "akka-testkit"   % akkaV
   )
 }
 
