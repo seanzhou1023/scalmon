@@ -2,10 +2,9 @@ package htwg.scalmon.view
 
 import htwg.scalmon.model._
 import htwg.scalmon.controller._
-import htwg.scalmon.view.wui.ServiceActor
-import htwg.scalmon.view.wui.ModelHack
+import htwg.scalmon.view.wui._
 
-import akka.actor.{ActorSystem, Props}
+import akka.actor.{ ActorSystem, Props }
 import akka.io.IO
 import spray.can.Http
 import akka.pattern.ask
@@ -17,14 +16,17 @@ class WUI(_model: Model, _controller: Controller) extends View(_model, _controll
   val service = system.actorOf(Props[ServiceActor], "demo-service")
   implicit val timeout = Timeout(5.seconds)
 
-  ModelHack.model = model
-  ModelHack.controller = controller
+  Bypass.model = model
+  Bypass.controller = controller
 
   def update(info: Option[AbilityInfo]) = {
     model.state match {
       case Init(_) => // nothing to do
-      case Exited  => { }
-      case _       => { }
+      case Exited  => {}
+      case _ => {
+        Bypass.battlefieldText = info.getOrElse(Bypass.lastInfo.getOrElse("Battlefield")).toString
+        Bypass.lastInfo = info
+      }
     }
   }
 

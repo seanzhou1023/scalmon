@@ -26,7 +26,7 @@ class ImageWrapper {
 
     image
   }
-  
+
   def asBase64 = {
     val bos = new ByteArrayOutputStream()
     ImageIO.write(image, "png", bos)
