@@ -8,7 +8,7 @@ import htwg.scalmon.model._
 class ScalmonFrame(val model: Model, val controller: Controller) extends swing.Frame {
   title = BuildInfo.name + " " + BuildInfo.version
 
-  val battleField = new Battlefield
+  val battleField = new Battlefield(model, controller)
   val playerA = new PlayerPanel(model.playerA)
   val playerB = new PlayerPanel(model.playerB)
   val timer = Timer(1500) { controller.handle(RunStep) }
