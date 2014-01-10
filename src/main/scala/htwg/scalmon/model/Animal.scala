@@ -25,7 +25,7 @@ class Animal(val name: String, val predictable: Boolean = false) {
 
   val initSpeed = max(attributeChoices(4), attributeChoices(5))
 
-  val baseBlockValue = max(attributeChoices(6), attributeChoices(7)) / 4
+  val baseBlockValue = max(attributeChoices(6), attributeChoices(7)) / 2
 
   val baseAttackValue =
     (attributeChoices(8) + attributeChoices(9) + attributeChoices(10)) / 2
@@ -44,7 +44,7 @@ class Animal(val name: String, val predictable: Boolean = false) {
   /*
    * From: http://stackoverflow.com/questions/20018423/
    */
-  val rollCriticalHit: Boolean = random <= criticalChance
+  def rollCriticalHit: Boolean = random <= criticalChance
 
   def variationBetween(value: Int): Tuple2[Int, Int] = (
     value - (value * (attributeChoices(14) / 255.0 * 0.3)).toInt,

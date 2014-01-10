@@ -40,8 +40,8 @@ class AnimalSpec extends FlatSpec with Matchers {
   }
 
   it should "have a base block value" in {
-    fixturePredictable.pika.baseBlockValue should be(43)
-    fixturePredictable.mauzi.baseBlockValue should be(53)
+    fixturePredictable.pika.baseBlockValue should be(86)
+    fixturePredictable.mauzi.baseBlockValue should be(106)
   }
 
   it should "have a base attack value" in {
@@ -83,11 +83,11 @@ class AnimalSpec extends FlatSpec with Matchers {
       val f2 = fixtureNotPredictable
       f2.pika attack f2.mauzi
       val dmg = f2.mauzi.initHealthPoints - f2.mauzi.healthPoints
-      if (dmg > (f2.pika.baseAttackValue * 1.5).toInt)
+      if (dmg > 0.75 * f2.pika.baseAttackValue)
         critDmg = dmg
       f2.mauzi.healthPoints should be < (866)
       iter += 1
-      if (iter > 100 && critDmg == 0)
+      if (iter > 1000 && critDmg == 0)
         critDmg should be > (f2.pika.baseAttackValue)
     }
 
@@ -102,14 +102,14 @@ class AnimalSpec extends FlatSpec with Matchers {
   it should "have a element type, where a air animal blocks good water animal damage" in {
     val f = fixturePredictable
     f.pika attack f.mauzi
-    f.mauzi.healthPoints should be(692)
+    f.mauzi.healthPoints should be(779)
   }
 
   it should "be able to wound itself, to enhance it's attack" in {
     val f = fixturePredictable
     f.pika.healthPoints should be(848)
     f.pika sacrificeAttack f.mauzi
-    f.mauzi.healthPoints should be(518)
+    f.mauzi.healthPoints should be(692)
     f.pika.healthPoints should be(765)
   }
 
