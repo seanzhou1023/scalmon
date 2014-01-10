@@ -2,7 +2,7 @@ package htwg.scalmon
 
 object UserInterface extends Enumeration {
   type UserInterface = Value
-  val Textual, Graphical, Web, All = Value
+  val Textual, Graphical, Web, All, TextualGraphical = Value
 }
 
 import UserInterface._
@@ -14,8 +14,9 @@ class Parser extends scopt.OptionParser[Config]("scalmon") {
   val listG = List("g", "graphical")
   val listW = List("w", "web")
   val listA = List("a", "all")
+  val listTG = List("tg")
 
-  val listValid = listT ::: listG ::: listW ::: listA
+  val listValid = listT ::: listG ::: listW ::: listA ::: listTG
 
   head(BuildInfo.name, BuildInfo.version)
 
@@ -27,10 +28,11 @@ class Parser extends scopt.OptionParser[Config]("scalmon") {
   opt[String]('u', "ui")
     .action { (x, c) =>
       c.copy(userInterface = x match {
-        case s if (listT.contains(s)) => Textual
-        case s if (listG.contains(s)) => Graphical
-        case s if (listW.contains(s)) => Web
-        case s if (listA.contains(s)) => All
+        case s if (listT.contains(s))  => Textual
+        case s if (listG.contains(s))  => Graphical
+        case s if (listW.contains(s))  => Web
+        case s if (listA.contains(s))  => All
+        case s if (listTG.contains(s)) => TextualGraphical
       })
     }
     .text("Specify the user interface with [" + listValid.mkString("|") + "].")
