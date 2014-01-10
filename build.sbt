@@ -9,15 +9,25 @@ resolvers ++= Seq(
   "Typesafe Snapshots" at "http://repo.typesafe.com/typesafe/snapshots/",
   "snapshots" at "http://oss.sonatype.org/content/repositories/snapshots",
   "releases"  at "http://oss.sonatype.org/content/repositories/releases",
-  "sonatype-public" at "https://oss.sonatype.org/content/groups/public"
+  "sonatype-public" at "https://oss.sonatype.org/content/groups/public",
+  "spray repo" at "http://repo.spray.io/"
 )
 
-libraryDependencies ++= Seq(
-  "org.scala-lang" % "scala-swing" % "2.10.3",
-  "com.github.scopt" %% "scopt" % "3.1.0",
-  "org.scalatest" % "scalatest_2.10" % "2.0.RC3" % "test"
-  //"play" % "play_2.10" % "2.1-SNAPSHOT"
-)
+libraryDependencies ++= {
+  val akkaV = "2.2.3"
+  val sprayV = "1.2.0"
+  Seq(
+    "org.scala-lang"      %   "scala-swing"    % "2.10.3",
+    "com.github.scopt"    %%  "scopt"          % "3.1.0",
+    "org.scalatest"       %   "scalatest_2.10" % "2.0.RC3" % "test",
+    "commons-codec"       %   "commons-codec"  % "1.8",
+    "io.spray"            %   "spray-can"      % sprayV,
+    "io.spray"            %   "spray-routing"  % sprayV,
+    "io.spray"            %   "spray-testkit"  % sprayV,
+    "com.typesafe.akka"   %%  "akka-actor"     % akkaV,
+    "com.typesafe.akka"   %%  "akka-testkit"   % akkaV
+  )
+}
 
 scalacOptions ++= Seq(
   "-deprecation",
