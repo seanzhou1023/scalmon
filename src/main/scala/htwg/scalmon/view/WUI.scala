@@ -22,7 +22,7 @@ class WUI(_model: Model, _controller: Controller) extends View(_model, _controll
   def update(info: Option[AbilityInfo]) = {
     model.state match {
       case Init(_) => // nothing to do
-      case Exited  => {}
+      case Exited  => system.shutdown
       case _ => {
         Bypass.battlefieldText = info.getOrElse(Bypass.lastInfo.getOrElse("Battlefield")).toString
         Bypass.lastInfo = info
@@ -31,5 +31,4 @@ class WUI(_model: Model, _controller: Controller) extends View(_model, _controll
   }
 
   def show = IO(Http) ? Http.Bind(service, interface = "localhost", port = 8080)
-
 }
