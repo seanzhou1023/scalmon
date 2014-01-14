@@ -50,6 +50,9 @@ class Animal(val name: String, val predictable: Boolean = false) {
     value - (value * (attributeChoices(14) / 255.0 * 0.3)).toInt,
     value + (value * (attributeChoices(15) / 255.0 * 0.6)).toInt)
 
+  val baseHealValue =
+    (attributeChoices(0) + attributeChoices(7) + attributeChoices(15)) / 2
+
   /*
    * From: http://stackoverflow.com/questions/4959975/
    */
@@ -108,9 +111,13 @@ class Animal(val name: String, val predictable: Boolean = false) {
   def attack(victim: Animal) = victim.block(this)
 
   def heal(on: Animal) = {
-    val health = min(this.baseAttackValue, on.initHealthPoints - on.healthPoints)
-    on.healthPoints += health
-    HealInfo(this, on, health)
+    var health: Double = min(this.baseHealValue, on.initHealthPoints - on.healthPoints)
+    if (rollCriticalHit)
+        health = health * 1.5
+    val (from, to) = variationBetween(health.toInt)
+    val healed = valueBetween(from, to)
+    on.healthPoints += healed
+    HealInfo(this, on, healed)
   }
 
   //def spreadHeal = 

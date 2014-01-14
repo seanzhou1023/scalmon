@@ -149,11 +149,11 @@ trait ScalmonService extends HttpService {
       {
         if (Bypass.activeAnimal == a) {
           <input type="radio" name="ability" value="2">
-            HEAL:{ a.variationBetween(a.baseAttackValue) }
+            HEAL:{ a.variationBetween(a.baseHealValue) }
           </input>
         } else {
           <input type="radio" disabled="disabled" name="ability" value="2">
-            HEAL:{ a.variationBetween(a.baseAttackValue) }
+            HEAL:{ a.variationBetween(a.baseHealValue) }
           </input>
         }
       }

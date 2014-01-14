@@ -26,7 +26,7 @@ class AnimalPanel(val a: Animal)
 
   val b2_text =
     <html>
-      HEAL:{ a.variationBetween(a.baseAttackValue) }<br/>
+      HEAL:{ a.variationBetween(a.baseHealValue) }<br/>
     </html>.toString
 
   val b3_text =

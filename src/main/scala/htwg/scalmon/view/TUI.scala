@@ -84,7 +84,7 @@ class TUI(_model: Model, _controller: Controller) extends View(_model, _controll
     val bAV = a.baseAttackValue
     List(
       s"DMG  ${a.variationBetween(bAV)}",
-      s"HEAL ${a.variationBetween(bAV)}",
+      s"HEAL ${a.variationBetween(a.baseHealValue)}",
       s"DMG  ${a.variationBetween(bAV * 2)} with SELF DMG ${a.variationBetween(bAV / 2)}")
   }
 

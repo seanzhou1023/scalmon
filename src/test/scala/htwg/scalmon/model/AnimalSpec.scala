@@ -49,6 +49,11 @@ class AnimalSpec extends FlatSpec with Matchers {
     fixturePredictable.mauzi.baseAttackValue should be(216)
   }
 
+  it should "have a base heal value" in {
+    fixturePredictable.pika.baseHealValue should be(153)
+    fixturePredictable.mauzi.baseHealValue should be(133)
+  }
+
   it should "have a critical chance value" in {
     fixturePredictable.pika.criticalChance shouldEqual 0.07 +- 0.01
     fixturePredictable.mauzi.criticalChance shouldEqual 0.02 +- 0.01
@@ -111,6 +116,15 @@ class AnimalSpec extends FlatSpec with Matchers {
     f.pika sacrificeAttack f.mauzi
     f.mauzi.healthPoints should be(692)
     f.pika.healthPoints should be(765)
+  }
+
+  it should "be able to heal other animals" in {
+    val f = fixturePredictable
+    f.pika.initHealthPoints should be(848)
+    f.pika.healthPoints -= 100
+    f.pika.healthPoints should be(748)
+    f.mauzi.heal(f.pika)
+    f.pika.healthPoints should be(848)
   }
 
 }
