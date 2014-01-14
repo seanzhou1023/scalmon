@@ -14,8 +14,6 @@ class ServiceActor extends Actor with ScalmonService {
   def receive = runRoute(route)
 }
 
-// TODO: Spieler und Animals anlegen Dialog
-
 object Bypass {
   var model: Model = null
   var controller: Controller = null
@@ -41,7 +39,11 @@ trait ScalmonService extends HttpService {
               initFrame
             else {
               <html>
-                { style }
+                <head>
+                  <title>scalmon web</title>
+                  <meta charset="UTF-8" />
+                  { style }
+                </head>
                 <body>
                   <h1>Say hello to <i>scalmon web</i>!</h1>
                   <form action="userAction" method="post">
@@ -121,60 +123,50 @@ trait ScalmonService extends HttpService {
         { a.name }<br/>
         {
           if (a.alive)
-            <input type="radio" align="center" name="animal" value={ idx }/>
+            <input type="radio" name="animal" value={ idx }/>
           else
-            <input type="radio" align="center" name="animal" value={ idx } disabled="disabled"/>
+            <input type="radio" name="animal" value={ idx } disabled="disabled"/>
         }
       </div>
-      <img src={ "data:image/png;base64," + a.image.asBase64 }/>
+      <img src={ "data:image/png;base64," + a.image.asBase64 } alt={ a.name } />
       <table>
         <tr><td>Life: </td><td>{ a.healthPoints } / { a.initHealthPoints }</td></tr>
         <tr><td>Speed:</td><td>{ a.initSpeed }</td></tr>
         <tr><td>Block:</td><td>{ a.baseBlockValue }</td></tr>
         <tr><td>Crit: </td><td>{ roundAt(2)(a.criticalChance * 100) }%</td></tr>
         <tr><td>Type: </td><td>{ a.animalType }</td></tr>
+        <tr><td>
+        {
+          if (Bypass.activeAnimal == a) {
+            <input type="radio" name="ability" value="1" />
+          } else {
+            <input type="radio" disabled="disabled" name="ability" value="1" />
+          }
+        }
+        </td><td>DMG:{ a.variationBetween(a.baseAttackValue) }</td></tr>
+        <tr><td>
+        {
+          if (Bypass.activeAnimal == a) {
+            <input type="radio" name="ability" value="2" />
+          } else {
+            <input type="radio" disabled="disabled" name="ability" value="2" />
+          }
+        }
+        </td><td>HEAL:{ a.variationBetween(a.baseAttackValue) }</td></tr>
+        <tr><td>
+        {
+          if (Bypass.activeAnimal == a) {
+            <input type="radio" name="ability" value="3" />
+          } else {
+            <input type="radio" disabled="disabled" name="ability" value="3" />
+          }
+        }
+        </td><td>DMG:{ a.variationBetween(a.baseAttackValue * 2) }<br/>SELF DMG:{ a.variationBetween(a.baseAttackValue / 2) }</td></tr>
       </table>
-      {
-        if (Bypass.activeAnimal == a) {
-          <input type="radio" name="ability" value="1">
-            DMG:{ a.variationBetween(a.baseAttackValue) }
-          </input>
-        } else {
-          <input type="radio" disabled="disabled" name="ability" value="1">
-            DMG:{ a.variationBetween(a.baseAttackValue) }
-          </input>
-        }
-      }
-      <br/>
-      {
-        if (Bypass.activeAnimal == a) {
-          <input type="radio" name="ability" value="2">
-            HEAL:{ a.variationBetween(a.baseAttackValue) }
-          </input>
-        } else {
-          <input type="radio" disabled="disabled" name="ability" value="2">
-            HEAL:{ a.variationBetween(a.baseAttackValue) }
-          </input>
-        }
-      }
-      <br/>
-      {
-        if (Bypass.activeAnimal == a) {
-          <input type="radio" name="ability" value="3">
-            DMG:{ a.variationBetween(a.baseAttackValue * 2) }<br/>
-            SELF DMG:{ a.variationBetween(a.baseAttackValue / 2) }
-          </input>
-        } else {
-          <input type="radio" disabled="disabled" name="ability" value="3">
-            DMG:{ a.variationBetween(a.baseAttackValue * 2) }<br/>
-            SELF DMG:{ a.variationBetween(a.baseAttackValue / 2) }
-          </input>
-        }
-      }
     </div>
 
   def battlefield =
-    <div align="center">
+    <div>
       <br/><br/>
       <strong>{ Bypass.battlefieldText }</strong>
       <br/><br/>
