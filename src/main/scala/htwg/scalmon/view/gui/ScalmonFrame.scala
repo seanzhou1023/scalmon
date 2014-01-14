@@ -13,10 +13,12 @@ class ScalmonFrame(val model: Model, val controller: Controller) extends swing.F
   val playerB = new PlayerPanel(model.playerB)
   val timer = Timer(1500) { controller.handle(RunStep) }
 
-  contents = new swing.BorderPanel {
-    add(battleField, swing.BorderPanel.Position.Center)
-    add(playerA, swing.BorderPanel.Position.North)
-    add(playerB, swing.BorderPanel.Position.South)
+  contents = new swing.ScrollPane {
+    contents = new swing.BorderPanel {
+      add(battleField, swing.BorderPanel.Position.Center)
+      add(playerA, swing.BorderPanel.Position.North)
+      add(playerB, swing.BorderPanel.Position.South)
+    }
   }
 
   var choosedAbility: Int = 0

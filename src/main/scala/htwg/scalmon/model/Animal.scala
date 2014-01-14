@@ -38,8 +38,8 @@ class Animal(val name: String, val predictable: Boolean = false) {
     case _               => throw new Exception("no animal type defined")
   }
 
-  val criticalChance: Double = max(
-    attributeChoices(12), attributeChoices(13)) / 255.0 * 0.4
+  val criticalChance: Double = min(
+    attributeChoices(12), attributeChoices(13)) / 255.0 * 0.5
 
   /*
    * From: http://stackoverflow.com/questions/20018423/

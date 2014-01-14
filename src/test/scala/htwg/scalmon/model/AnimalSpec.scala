@@ -50,8 +50,8 @@ class AnimalSpec extends FlatSpec with Matchers {
   }
 
   it should "have a critical chance value" in {
-    fixturePredictable.pika.criticalChance shouldEqual 0.16 +- 0.01
-    fixturePredictable.mauzi.criticalChance shouldEqual 0.39 +- 0.01
+    fixturePredictable.pika.criticalChance shouldEqual 0.07 +- 0.01
+    fixturePredictable.mauzi.criticalChance shouldEqual 0.02 +- 0.01
   }
 
   it should "offer variations to values" in {
