@@ -49,6 +49,14 @@ for a game with three animals and GUI, just type:
 
     java -jar scalmon-assembly-0.2.0.jar -u g -s 3
 
+## Code Coverage
+
+To get a code coverage report type:
+
+    sbt jacoco:cover
+
+In the folder target/scala-2.10/jacoco/html is the html report.
+
 ## Roadmap
 
 Version 0.1:
