@@ -26,6 +26,8 @@ object Bypass {
       null
   var lastInfo: Option[AbilityInfo] = None
   var battlefieldText = ""
+  var restartButton = false
+  var inInitPhase = true
 }
 
 trait ScalmonService extends HttpService {
@@ -35,42 +37,54 @@ trait ScalmonService extends HttpService {
       get {
         respondWithMediaType(`text/html`) {
           complete {
-            <html>
-              { style }
-              <body>
-                <h1>Say hello to <i>scalmon web</i>!</h1>
-                <form action="userAction" method="post">
-                  { drawAnimals(Bypass.model.playerA, "A") }
-                  { battlefield }
-                  { drawAnimals(Bypass.model.playerB, "B") }
-                  <br/><br/>
-                  <center>
-                    <input type="submit" value="Attack!"></input>
-                  </center>
-                </form>
-              </body>
-            </html>
+            if (Bypass.inInitPhase)
+              initFrame
+            else {
+              <html>
+                { style }
+                <body>
+                  <h1>Say hello to <i>scalmon web</i>!</h1>
+                  <form action="userAction" method="post">
+                    { drawAnimals(Bypass.model.playerA, "A") }
+                    { battlefield }
+                    { drawAnimals(Bypass.model.playerB, "B") }
+                    <br /><br />
+                    <input type="submit" name="quit" value="Quit Server" />
+                  </form>
+                </body>
+              </html>
+            }
           }
         }
       }
     } ~
       (post | parameter('method ! "post")) {
         path("userAction") {
-          formFields('ability, 'animal) { (ability, animal) =>
-            val pi: Seq[String] = animal.split(",")
-            val player = pi(0)
-            val index = pi(1).toInt
-            val targetAnimal =
-              if (player == "A")
-                Bypass.model.playerA.animals(index)
-              else
-                Bypass.model.playerB.animals(index)
+          formFields('quit.?, 'ability.?, 'animal.?) { (quitOpt, abilityOpt, animalOpt) =>
+            if (quitOpt != None) {
+              Bypass.controller.handle(Quit)
+            }
+            else if (abilityOpt == None || animalOpt == None) {
+              Bypass.controller.handle(Restart)
+            }
+            else {
+              val ability = abilityOpt.get
+              val animal = animalOpt.get
+              val pi: Seq[String] = animal.split(",")
+              val player = pi(0)
+              val index = pi(1).toInt
+              val targetAnimal =
+                if (player == "A")
+                  Bypass.model.playerA.animals(index)
+                else
+                  Bypass.model.playerB.animals(index)
 
-            val command = Ability(ability.toInt, targetAnimal)
-            Bypass.controller.handle(command)
+              val command = Ability(ability.toInt, targetAnimal)
+              Bypass.controller.handle(command)
 
-            while (Bypass.model.state.isInstanceOf[RunRound]) {
-              Bypass.controller.handle(RunStep)
+              while (Bypass.model.state.isInstanceOf[RunRound]) {
+                Bypass.controller.handle(RunStep)
+              }
             }
 
             redirect("/", StatusCodes.Found)
@@ -149,7 +163,31 @@ trait ScalmonService extends HttpService {
       <br/><br/>
       <strong>{ Bypass.battlefieldText }</strong>
       <br/><br/>
+      <input type="submit" value={if (Bypass.restartButton) "Restart!" else "Attack!"} />
+      <br/><br/>
     </div>
+
+  def initFrame =
+    <html>
+      { style }
+      <body>
+        <h1>Say hello to <i>scalmon web</i>!</h1>
+        <form action="initAction" method="post">
+          <table>
+            <tr><td>Your Name: </td><td>INPUT</td></tr>
+            <tr><td></td><td></td></tr>
+            <tr><td>Animal 1:</td><td><input type="text" name="animalName"/></td></tr>
+            <tr><td>Animal 2:</td><td><input type="text" name="animalName"/></td></tr>
+          </table>
+          <table>
+            <tr><td>KI Name: </td><td>INPUT</td></tr>
+            <tr><td></td><td></td></tr>
+            <tr><td>Animal 1:</td><td>INPUT</td></tr>
+          </table>
+          <input type="submit" value="Play!" />
+        </form>
+      </body>
+    </html>
 
   def styleUnparsed = scala.xml.Unparsed("""
      @import url(http://fonts.googleapis.com/css?family=Source+Sans+Pro:300);

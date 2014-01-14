@@ -21,11 +21,26 @@ class WUI(_model: Model, _controller: Controller) extends View(_model, _controll
 
   def update(info: Option[AbilityInfo]) = {
     model.state match {
-      case Init(_) => // nothing to do
+      case Init(_) => Bypass.inInitPhase = true
       case Exited  => system.shutdown
       case _ => {
-        Bypass.battlefieldText = info.getOrElse(Bypass.lastInfo.getOrElse("Battlefield")).toString
+        Bypass.inInitPhase = false
+        var showInfo = info.orElse(Bypass.lastInfo)
         Bypass.lastInfo = info
+
+        Bypass.battlefieldText = model.state.isInstanceOf[GameOver] match {
+          case true =>
+            Bypass.restartButton = true
+            val winner = model.state.asInstanceOf[GameOver].winner
+            "Game over! The winner is " + (if (winner != null) winner.name else "None") + "!"
+          case false =>
+            Bypass.restartButton = false
+            showInfo.getOrElse(null) match {
+              case a: AttackInfo => s"${a.attacker.name} attacks ${a.victim.name} with a damage of ${a.damage}."
+              case h: HealInfo   => s"${h.healer.name} healed ${h.cured.name} with ${h.healthPoints} health points."
+              case _             => ""
+            }
+        }
       }
     }
   }
