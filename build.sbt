@@ -1,3 +1,7 @@
+import de.johoop.jacoco4sbt._
+
+import JacocoPlugin._
+
 name := "scalmon"
 
 version := "0.4.0"
@@ -47,3 +51,6 @@ buildInfoPackage := "htwg.scalmon"
 EclipseKeys.createSrc := EclipseCreateSrc.Default + EclipseCreateSrc.Managed
 
 assemblySettings
+
+// Code Coverage
+jacoco.settings

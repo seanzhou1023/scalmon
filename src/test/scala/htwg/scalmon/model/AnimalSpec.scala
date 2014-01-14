@@ -21,13 +21,13 @@ class AnimalSpec extends FlatSpec with Matchers {
     fixturePredictable.mauzi.name should be("Mauzi")
   }
 
-  //  it should "have a valid image" in {
-  //    val f = fixture
-  //    f.pika.image should not equal null
-  //    f.pika.image.getHeight(null) should be > 0
-  //    f.mauzi.image should not equal null
-  //    f.mauzi.image.getHeight(null) should be > 0
-  //  }
+   it should "have a valid image" in {
+     val f = fixturePredictable
+     f.pika.image should not equal null
+     f.pika.image.get().getHeight(null) should be > 0
+     f.mauzi.image should not equal null
+     f.mauzi.image.get().getHeight(null) should be > 0
+   }
 
   it should "have maximum health points (calculated from the name)" in {
     fixturePredictable.pika.initHealthPoints should be(848)
@@ -121,8 +121,8 @@ class AnimalSpec extends FlatSpec with Matchers {
   it should "be able to heal other animals" in {
     val f = fixturePredictable
     f.pika.initHealthPoints should be(848)
-    f.pika.healthPoints -= 100
-    f.pika.healthPoints should be(748)
+    f.pika.healthPoints -= 24
+    f.pika.healthPoints should be(824)
     f.mauzi.heal(f.pika)
     f.pika.healthPoints should be(848)
   }

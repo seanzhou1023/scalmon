@@ -111,30 +111,22 @@ class Animal(val name: String, val predictable: Boolean = false) {
   def attack(victim: Animal) = victim.block(this)
 
   def heal(on: Animal) = {
-    var health: Double = min(this.baseHealValue, on.initHealthPoints - on.healthPoints)
+    var healed: Double = this.baseHealValue
     if (rollCriticalHit)
-        health = health * 1.5
-    val (from, to) = variationBetween(health.toInt)
-    val healed = valueBetween(from, to)
-    on.healthPoints += healed
-    HealInfo(this, on, healed)
-  }
+        healed = healed * 1.5
+    val (from, to) = variationBetween(healed.toInt)
+    healed = valueBetween(from, to)
 
-  //def spreadHeal = 
+    var health = min(healed.toInt, on.initHealthPoints - on.healthPoints)
+    on.healthPoints += health
+    HealInfo(this, on, health)
+  }
 
   def sacrificeAttack(victim: Animal) = {
     val additionalDmg = this.baseAttackValue
     this.healthPoints -= additionalDmg / 2
     victim.block(this, additionalDmg)
   }
-
-  //def taunt =  // spotten
-
-  //def fade =  // verblassen
-
-  //def sacrificeOtherAttack = 
-
-  // def stackAttack = // mehrfach Angriff (3-5 mal), innerhalb des Angriffs erhoeht sich die Krit Chance temporaer
 
   def ability(ability: Ability): AbilityInfo = ability.skill match {
     case 1 => attack(ability.target)
