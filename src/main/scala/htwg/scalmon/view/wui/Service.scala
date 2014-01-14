@@ -90,7 +90,22 @@ trait ScalmonService extends HttpService {
             redirect("/", StatusCodes.Found)
           }
         }
+      } ~
+      (post | parameter('method ! "post")) {
+        path("initAction") {
+          entity(as[FormData]) { formData =>
+            initPlayer("A", formData.fields.toList)
+            initPlayer("B", formData.fields.toList)
+            redirect("/", StatusCodes.Found)
+          }
+        }
       }
+
+  def initPlayer(key: String, fields: List[Tuple2[String,String]]) = {
+    val playerName = fields.find(_._1 == ("player" + key)).get._2
+    val animalNames = fields.filter(_._1.contains("animal" + key)).map(_._2)
+    Bypass.controller.handle(SetPlayer(playerName, animalNames)) 
+  }
 
   def drawAnimals(p: Player, AorB: String) =
     <div class="row">
@@ -167,23 +182,26 @@ trait ScalmonService extends HttpService {
       <br/><br/>
     </div>
 
+  def initRows(name: String, key: String) =
+    <table align="center">
+      <tr><td>{name} Name: </td><td><input type="text" name={"player" + key}/></td></tr>
+      <tr><td></td><td></td></tr>
+      {
+        for (i <- 1 to Bypass.model.gameSize)
+          yield <tr><td>Animal {i}:</td><td>
+                <input type="text" name={"animal" + key + i}/></td></tr>
+      }
+    </table>
+
   def initFrame =
     <html>
       { style }
       <body>
         <h1>Say hello to <i>scalmon web</i>!</h1>
         <form action="initAction" method="post">
-          <table>
-            <tr><td>Your Name: </td><td>INPUT</td></tr>
-            <tr><td></td><td></td></tr>
-            <tr><td>Animal 1:</td><td><input type="text" name="animalName"/></td></tr>
-            <tr><td>Animal 2:</td><td><input type="text" name="animalName"/></td></tr>
-          </table>
-          <table>
-            <tr><td>KI Name: </td><td>INPUT</td></tr>
-            <tr><td></td><td></td></tr>
-            <tr><td>Animal 1:</td><td>INPUT</td></tr>
-          </table>
+          {initRows("Your", "A")}
+          <br /><br />
+          {initRows("KI", "B")}
           <input type="submit" value="Play!" />
         </form>
       </body>
