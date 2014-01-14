@@ -3,6 +3,7 @@ package htwg.scalmon.controller
 import htwg.scalmon.model._
 import htwg.scalmon.utils.Log
 import scala.util.Random
+import scala.math.random
 
 class Controller(val model: Model, val logExceptions: Boolean = true) {
 
@@ -49,13 +50,17 @@ class Controller(val model: Model, val logExceptions: Boolean = true) {
   }
 
   private def startRound(number: Int) = {
-    val firstAliveOfA = model.playerA.animalsAlive.head
+    val aliveOfA = model.playerA.animalsAlive
 
     val aiAttacks =
       for (animal <- model.playerB.animalsAlive)
-        yield (animal, Ability(1, firstAliveOfA)) // TODO: better AI?
+        yield random match {
+        case x if x < 0.2 => (animal, Ability(2, Random.shuffle(model.playerB.animalsAlive).head)) // heal
+        case x if x > 0.8 => (animal, Ability(3, Random.shuffle(aliveOfA).head)) // sacrifice attack
+        case _            => (animal, Ability(1, Random.shuffle(aliveOfA).head))
+      }
 
-    Round(number, firstAliveOfA, aiAttacks.toMap)
+    Round(number, aliveOfA.head, aiAttacks.toMap)
   }
 
   private def cmdAbility(cmd: Ability) {
